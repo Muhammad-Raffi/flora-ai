@@ -1,0 +1,63 @@
+﻿<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="FLORA membantu memilih tanaman hias berdasarkan kondisi ruang dan preferensi pengguna.">
+    <title>FLORA</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/icon.png') }}?v=flora-2" type="image/png">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logo.png') }}?v=flora-2" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}?v=flora-2">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+
+    <header class="site-header">
+      {# unused: data-site-header #}
+      <div class="header-inner">
+        <a class="brand-mark" href="{{ url_for('beranda') }}" aria-label="Beranda FLORA">
+          <img src="{{ url_for('static', filename='img/logo.png') }}" width="132" height="56" alt="" aria-hidden="true">
+        </a>
+
+        <nav class="main-nav" aria-label="Navigasi utama">
+          {# unused: data-main-nav #}
+          <a href="{{ url_for('beranda') }}" {% if active_page == 'beranda' %}aria-current="page"{% endif %}>Beranda</a>
+          <a href="{{ url_for('rekomendasi') }}" {% if active_page == 'rekomendasi' %}aria-current="page"{% endif %}>Rekomendasi</a>
+          <a href="{{ url_for('tentang') }}" {% if active_page == 'tentang' %}aria-current="page"{% endif %}>Tentang</a>
+        </nav>
+
+        <button class="burger-button" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mobile-menu" data-burger>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <nav class="mobile-nav" id="mobile-menu" aria-label="Navigasi mobile" data-mobile-nav hidden>
+        <a href="{{ url_for('beranda') }}" {% if active_page == 'beranda' %}aria-current="page"{% endif %}>Beranda</a>
+        <a href="{{ url_for('rekomendasi') }}" {% if active_page == 'rekomendasi' %}aria-current="page"{% endif %}>Rekomendasi</a>
+        <a href="{{ url_for('tentang') }}" {% if active_page == 'tentang' %}aria-current="page"{% endif %}>Tentang</a>
+      </nav>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div>
+          <strong class="footer-brand"><img src="{{ url_for('static', filename='img/logo-w-bg.jpg') }}" width="156" height="58" alt="FLORA"></strong>
+          <p>{{ tagline }}</p>
+        </div>
+        <p class="footer-note">Kelompok 3</p>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  </body>
+</html>

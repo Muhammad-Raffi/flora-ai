@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Tentang FLORA{% endblock %}
+
+{% block content %}
+<section class="page-hero about-hero" aria-labelledby="about-title">
+  <div>
+    <p class="eyebrow">Tentang Proyek</p>
+
+    <h1 id="about-title">FLORA</h1>
+
+    <p class="hero-subtitle">
+      Dibuat untuk demo rekomendasi tanaman hias yang ringan dan mudah dipahami.
+    </p>
+
+    <hr>
+
+    <p>
+      Aplikasi ini menggabungkan data tanaman hias, pertanyaan preferensi, dan aturan
+      forward chaining untuk memberi rekomendasi yang bisa dijelaskan saat presentasi.
+    </p>
+  </div>
+</section>
+
+<section class="about-section" aria-labelledby="team-title">
+  <div class="section-heading">
+    <p class="eyebrow">Tim</p>
+    <h2 id="team-title">Anggota Kelompok</h2>
+  </div>
+
+  <div class="member-grid">
+    {% for member in members %}
+      <article class="member-card">
+        <span>{{ member[0] }}</span>
+        <h3>{{ member[1] }}</h3>
+
+        <dl>
+          <div>
+            <dt>NIM</dt>
+            <dd>{{ member[2] }}</dd>
+          </div>
+
+          <div>
+            <dt>Kelas</dt>
+            <dd>{{ member[3] }}</dd>
+          </div>
+
+          <div>
+            <dt>Peran</dt>
+            <dd>{{ member[4] }}</dd>
+          </div>
+        </dl>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="reference-section" aria-labelledby="reference-title">
+  <div class="section-heading">
+    <p class="eyebrow">Referensi</p>
+    <h2 id="reference-title">Bahan Pendukung</h2>
+  </div>
+
+  <div class="reference-list">
+    {% for reference in references %}
+      <article class="reference-item">
+        <span>Ref {{ loop.index }}</span>
+        <p>{{ reference }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

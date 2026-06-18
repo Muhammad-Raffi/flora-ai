@@ -1,0 +1,130 @@
+﻿{% extends "base.html" %}
+
+{% block title %}FLORA{% endblock %}
+
+{% block content %}
+<section class="page-hero recommendation-hero" aria-labelledby="recommendation-title">
+  <div>
+    <p class="eyebrow">Rekomendasi tanaman</p>
+    <h1 id="recommendation-title">FLORA</h1>
+    <p class="recommendation-title-line">cari tanaman yang pas.</p>
+    <p>
+      Isi pilihan seperti memilih moodboard mini. Setiap jawaban membantu FLORA
+      mencocokkan kondisi ruang dengan data tanaman hias.
+    </p>
+  </div>
+</section>
+
+<section class="recommendation-section" aria-label="Form rekomendasi tanaman">
+  {% if errors %}
+    <div class="alert" role="alert">
+      <strong>Belum bisa diproses.</strong>
+      <ul>
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if result %}
+    <div class="result-layout" aria-live="polite">
+      <div class="result-summary">
+        <p class="eyebrow">Hasil rekomendasi</p>
+        <h2>{{ result.summary }}</h2>
+      </div>
+
+      <div class="result-list">
+        {% for item in result.recommendations %}
+          <article class="result-card">
+            <figure class="result-media">
+              <img
+                src="{{ url_for('static', filename=item.image_filename) }}"
+                alt="Foto tanaman {{ item.name }}"
+                width="900"
+                height="700"
+                loading="lazy"
+              >
+            </figure>
+            <div class="result-content">
+              <div class="result-labels">
+                <p class="result-rank">REKOMENDASI {{ item.rank }}</p>
+                <span class="result-status">{{ item.status }}</span>
+              </div>
+              <h3>{{ item.name }}</h3>
+              <p class="result-description">{{ item.description }}</p>
+              <p class="result-care">{{ item.care }}</p>
+
+              <div class="result-group" aria-label="Alasan kecocokan">
+                <strong>Alasan kecocokan</strong>
+                <ul class="match-list">
+                  {% for reason in item.reasons %}
+                    <li>{{ reason }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <div class="result-group" aria-label="Atribut tanaman">
+                <strong>Atribut tanaman</strong>
+                <div class="profile-tags">
+                  {% for badge in item.badges %}
+                    <span>{{ badge }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <a class="primary-button reset-button" href="{{ url_for('rekomendasi') }}">Rekomendasi Lagi</a>
+    </div>
+  {% else %}
+    <form class="recommendation-stage" method="post" data-recommendation-form aria-describedby="step-error" novalidate>
+      <div class="stage-header">
+        <div>
+          <p class="eyebrow">Preferensi</p>
+          <h2>Jawab satu per satu</h2>
+        </div>
+        <div class="progress-copy" aria-live="polite">
+          <span data-step-count>1</span> / {{ questions|length }}
+        </div>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <span data-progress-bar></span>
+      </div>
+
+      <div class="steps" data-total-steps="{{ questions|length }}">
+        {% for question in questions %}
+          <fieldset class="question-step" data-step="{{ loop.index }}">
+            <legend tabindex="-1">
+              <span>Pertanyaan {{ loop.index }}</span>
+              {{ question.question }}
+            </legend>
+            <div class="choice-grid">
+              {% for choice in question.choices %}
+                <label class="choice-chip">
+                  <input
+                    type="radio"
+                    name="{{ question.variable }}"
+                    value="{{ choice.value }}"
+                    {% if answers.get(question.variable) == choice.value %}checked{% endif %}
+                  >
+                  <span>{{ choice.label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% endfor %}
+      </div>
+
+      <p class="step-error" id="step-error" role="alert" data-step-error hidden>Pilih satu jawaban dulu.</p>
+
+      <div class="stage-actions">
+        <button class="secondary-button" type="button" data-prev-step hidden>Sebelumnya</button>
+      </div>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

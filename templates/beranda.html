@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+
+{% block title %}FLORA{% endblock %}
+
+{% block content %}
+<section class="hero-section" aria-labelledby="hero-title">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Flower & Leaf Ornamental Recommendation Assistant</p>
+
+      <div class="flora-logo" aria-label="FLORA">
+        <h1 id="hero-title" class="flora-word">
+          <span class="flora-letter letter-f">F</span>
+          <span class="flora-letter letter-l">L</span>
+          <span class="flora-letter letter-o">O</span>
+          <span class="flora-letter letter-r">R</span>
+          <span class="flora-letter letter-a">A</span>
+        </h1>
+        <svg class="flora-underline" viewBox="0 0 520 78" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="floraLineGradient" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#2fbf71" />
+              <stop offset="0.28" stop-color="#a7e957" />
+              <stop offset="0.52" stop-color="#6ee7b7" />
+              <stop offset="0.78" stop-color="#14b8a6" />
+              <stop offset="1" stop-color="#f7b267" />
+            </linearGradient>
+          </defs>
+          <path class="underline-path" pathLength="1000" d="M14 34 C58 14 100 50 146 32 S218 16 246 32 C276 50 232 66 228 38 C224 10 274 8 282 34 C292 66 334 48 374 32 S452 16 506 34" />
+          <circle class="underline-end-dot" cx="506" cy="34" r="7" />
+          <g class="underline-dots">
+            <circle cx="112" cy="34" r="4" />
+            <circle cx="178" cy="34" r="4" />
+            <circle cx="244" cy="34" r="4" />
+            <circle cx="310" cy="34" r="4" />
+            <circle cx="376" cy="34" r="4" />
+            <circle cx="442" cy="34" r="4" />
+            <circle cx="506" cy="34" r="5" />
+          </g>
+        </svg>
+      </div>
+
+      <p class="hero-lede">
+        Temukan tanaman hias yang cocok dengan cahaya, ruang, kebiasaan merawat,
+        dan suasana tempatmu. FLORA membaca pilihanmu lalu memberi rekomendasi yang siap dipresentasikan.
+      </p>
+
+      <div class="hero-actions">
+        <a class="primary-button" href="{{ url_for('rekomendasi') }}">Mulai Rekomendasi</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-label="Kolase tanaman hias FLORA">
+      <img class="hero-photo hero-photo-main" src="{{ url_for('static', filename='img/img_1.jpg') }}" width="735" height="952" fetchpriority="high" alt="Tanaman hias dalam pot sebagai suasana utama FLORA">
+      <img class="hero-photo hero-photo-left" src="{{ url_for('static', filename='img/img_2.jpg') }}" width="450" height="450" loading="lazy" alt="Tanaman hias kecil untuk inspirasi rekomendasi FLORA">
+      <img class="hero-photo hero-photo-right" src="{{ url_for('static', filename='img/img_3.jpg') }}" width="736" height="1291" loading="lazy" alt="Tanaman hias tinggi untuk inspirasi rekomendasi FLORA">
+      <div class="plant-orbit orbit-one"></div>
+      <div class="plant-orbit orbit-two"></div>
+      <div class="hero-panel">
+        <span>{{ dataset_stats.plant_count }} tanaman</span>
+        <strong>{{ dataset_stats.question_count }} preferensi</strong>
+        <span>Forward Chaining</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="intro-band" aria-label="Ringkasan cara kerja">
+  <div class="intro-item">
+    <span>01</span>
+    <strong>Pilih kondisi</strong>
+    <p>Cahaya, ruang, penyiraman, dan preferensi tanaman.</p>
+  </div>
+  <div class="intro-item">
+    <span>02</span>
+    <strong>FLORA mencocokkan</strong>
+    <p>Aturan forward chaining dan data tanaman dipakai untuk memberi rekomendasi.</p>
+  </div>
+  <div class="intro-item">
+    <span>03</span>
+    <strong>Dapatkan hasil</strong>
+    <p>Rekomendasi muncul sebagai card ringkas dan mudah dijelaskan.</p>
+  </div>
+</section>
+{% endblock %}
