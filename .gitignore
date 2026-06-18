@@ -1,0 +1,139 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python packaging and build output
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+.installed.cfg
+MANIFEST
+wheels/
+share/python-wheels/
+
+# Flask and runtime instance data
+instance/
+.webassets-cache
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Local databases
+db.sqlite3
+db.sqlite3-journal
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Test, coverage, type-checker, and linter cache
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+cover/
+*.cover
+*.py,cover
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.tox/
+.nox/
+
+# Notebook and REPL cache
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# Frontend dependencies and generated artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.parcel-cache/
+.vite/
+
+# Temporary and generated local files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+~$*.xlsx
+~$*.docx
+
+# Editor and IDE settings
+.vscode/
+.idea/
+.spyderproject
+.spyproject
+.ropeproject
+.cursorignore
+.cursorindexingignore
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Keep application source and required assets tracked
+!app.py
+!requirements.txt
+!README.md
+!PRODUCT.md
+!ai/
+!ai/**
+!static/
+!static/**
+!templates/
+!templates/**
+!References/
+!References/**
+
+# Keep generated Python files ignored after source-folder allow rules
+ai/**/__pycache__/
+ai/**/*.py[cod]
+
+# Keep process documentation/workflow files tracked
+!process/
+!process/**
+!proses/
+!proses/**
+
+# Still ignore generated files inside process folders
+process/**/__pycache__/
+process/**/*.py[cod]
+proses/**/__pycache__/
+proses/**/*.py[cod]
+process/**/.env
+process/**/.env.*
+proses/**/.env
+proses/**/.env.*
