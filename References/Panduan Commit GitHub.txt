@@ -1,0 +1,8 @@
+Panduan Commit Massage GitHub
+
+feat : Penambahan fitur baru
+fix : Perbaikan bug
+refactor : Perubahan struktur tanpa ubah fungsi
+docs : Perubahan dokumentasi
+test : Tambahan / modifikasi testing
+chore : Pembaruan minor (config, dsb.)
