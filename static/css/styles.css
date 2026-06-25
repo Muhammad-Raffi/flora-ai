@@ -635,7 +635,7 @@ main {
 
 .stage-header {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
   justify-content: space-between;
 }
@@ -1022,32 +1022,48 @@ main {
   font-size: 1.35rem;
 }
 
+.footer-copy {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
 .footer-brand {
   position: relative;
   display: inline-flex;
-  width: 156px;
-  min-height: 58px;
+  width: clamp(112px, 28vw, 156px);
+  aspect-ratio: 156 / 58;
+  min-height: 0;
   overflow: hidden;
   align-items: center;
-  border: 1px solid rgba(255, 253, 246, 0.22);
-  border-radius: 999px;
+  border: 1px solid rgba(255, 253, 246, 0.18);
+  border-radius: 8px;
   background: #fffdf6;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 12px 28px rgba(0, 0, 0, 0.18);
+  box-shadow: none;
 }
 
 .footer-brand img {
-  width: 154px;
-  height: 154px;
+  position: static;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  transform: none;
 }
 
-.footer-inner p {
+.footer-tagline {
+  max-width: 30rem;
   margin: 0.25rem 0 0;
   color: #cce7d3;
+  line-height: 1.5;
 }
 
 .footer-note {
-  max-width: 360px;
+  margin: 0;
+  color: #dff5cf;
+  font-weight: 800;
   text-align: right;
+  white-space: nowrap;
 }
 
 @keyframes colorF {
@@ -1234,14 +1250,9 @@ main {
     font-size: 2.2rem;
   }
 
-  .stage-header,
-  .footer-inner {
+  .stage-header {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .footer-note {
-    text-align: left;
   }
 
   .choice-grid {
@@ -1269,7 +1280,52 @@ main {
   }
 }
 
+@media (max-width: 762px) {
+  .footer-inner {
+    min-height: auto;
+    padding: 1.35rem 0;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    text-align: left;
+  }
+
+  .footer-copy {
+    justify-items: start;
+    gap: 0.45rem;
+  }
+
+  .footer-tagline {
+    max-width: 100%;
+    margin-top: 0;
+    font-size: clamp(0.58rem, 2.2vw, 0.74rem);
+    line-height: 1.25;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .footer-note {
+    align-self: flex-end;
+    font-size: 0.78rem;
+    text-align: right;
+  }
+}
+
 @media (max-width: 430px) {
+  .footer-inner {
+    width: min(100% - 1.5rem, 28rem);
+    padding: 1.1rem 0;
+  }
+
+  .footer-brand {
+    width: clamp(104px, 34vw, 128px);
+  }
+
+  .footer-tagline {
+    font-size: clamp(0.55rem, 2.65vw, 0.64rem);
+  }
+
   .flora-word {
     font-size: 4rem;
   }

@@ -50,9 +50,11 @@
 
     <footer class="site-footer">
       <div class="footer-inner">
-        <div>
-          <strong class="footer-brand"><img src="{{ url_for('static', filename='img/logo-w-bg.jpg') }}" width="156" height="58" alt="FLORA"></strong>
-          <p>{{ tagline }}</p>
+        <div class="footer-copy">
+          <strong class="footer-brand">
+            <img src="{{ url_for('static', filename='img/logo-w-bg.jpg') }}" width="156" height="58" alt="FLORA">
+          </strong>
+          <p class="footer-tagline">{{ tagline }}</p>
         </div>
         <p class="footer-note">Kelompok 3</p>
       </div>
