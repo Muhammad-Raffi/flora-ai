@@ -1,6 +1,8 @@
 ﻿# Unused for final demo; kept as comment in case project paths are needed later.
 # from pathlib import Path
 
+import os
+
 from flask import Flask, redirect, render_template, request, url_for
 
 from ai.recommender import get_dataset_stats, get_questions, recommend_plants, validate_answers
@@ -23,10 +25,36 @@ MEMBERS = [
     ["Anggota 4", "Long afternoon", "secret (?)", "secret (?)", "Support System"],
 ]
 
+SECURITY_HEADERS = {
+    "Content-Security-Policy": (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data:; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "frame-ancestors 'self'; "
+        "form-action 'self'"
+    ),
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
+}
+
 
 @app.context_processor
 def inject_globals():
     return {"app_name": "FLORA", "tagline": "Flower & Leaf Ornamental Recommendation Assistant", "dataset_stats": get_dataset_stats()}
+
+
+@app.after_request
+def add_security_headers(response):
+    for header, value in SECURITY_HEADERS.items():
+        response.headers.setdefault(header, value)
+    if request.is_secure:
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    return response
 
 
 @app.route("/")
@@ -37,6 +65,12 @@ def beranda():
 @app.route("/favicon.ico")
 def favicon():
     return redirect(url_for("static", filename="img/icon.png"))
+
+
+@app.route("/healthz")
+def healthz():
+    stats = get_dataset_stats()
+    return {"status": "ok", "plants": stats["plant_count"], "questions": stats["question_count"]}
 
 
 @app.route("/rekomendasi", methods=["GET", "POST"])
@@ -73,4 +107,4 @@ def tentang():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1")
