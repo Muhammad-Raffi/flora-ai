@@ -1,0 +1,13 @@
+{
+  "name": "flora-ai-quality-gates",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test e2e/accessibility.spec.js",
+    "lighthouse": "node scripts/run-lighthouse.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.49.0"
+  }
+}
