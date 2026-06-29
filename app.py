@@ -22,7 +22,6 @@ MEMBERS = [
     ["Anggota 1", "Muhammad Raffi", "2411082039", "TRPL 2-D", "Ketua"],
     ["Anggota 2", "Wildan Hafidh", "2411082034", "TRPL 2-D", "Data Processing"],
     ["Anggota 3", "Restia Amelia", "2411081038", "TRPL 2-D", "Modeling"],
-    ["Anggota 4", "Long afternoon", "secret (?)", "secret (?)", "Support System"],
 ]
 
 SECURITY_HEADERS = {

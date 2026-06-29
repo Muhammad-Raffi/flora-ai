@@ -5,26 +5,26 @@
 {% block content %}
 <section class="page-hero about-hero" aria-labelledby="about-title">
   <div>
-    <p class="eyebrow">Tentang Proyek</p>
+    <p class="eyebrow">Tentang FLORA</p>
 
     <h1 id="about-title">FLORA</h1>
 
     <p class="hero-subtitle">
-      Dibuat untuk demo rekomendasi tanaman hias yang ringan dan mudah dipahami.
+      Sistem pakar rekomendasi tanaman hias berbasis forward chaining.
     </p>
 
     <hr>
 
     <p>
-      Aplikasi ini menggabungkan data tanaman hias, pertanyaan preferensi, dan aturan
-      forward chaining untuk memberi rekomendasi yang bisa dijelaskan saat presentasi.
+      FLORA membaca preferensi pengguna, mencocokkannya dengan aturan dari dataset,
+      lalu menampilkan tanaman hias yang paling sesuai untuk kondisi ruang dan gaya perawatan.
     </p>
   </div>
 </section>
 
 <section class="about-section" aria-labelledby="team-title">
   <div class="section-heading">
-    <p class="eyebrow">Tim</p>
+    <p class="eyebrow">Tim Pengembang</p>
     <h2 id="team-title">Anggota Kelompok</h2>
   </div>
 
@@ -65,7 +65,8 @@
     {% for reference in references %}
       <article class="reference-item">
         <span>Ref {{ loop.index }}</span>
-        <p>{{ reference }}</p>
+        <h3>{{ reference.split(" - ")[0] }}</h3>
+        <p>{{ reference.split(" - ")[1] if " - " in reference else "Referensi pendukung FLORA" }}</p>
       </article>
     {% endfor %}
   </div>

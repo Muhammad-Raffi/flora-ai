@@ -1,17 +1,29 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}FLORA{% endblock %}
 
 {% block content %}
 <section class="page-hero recommendation-hero" aria-labelledby="recommendation-title">
   <div>
-    <p class="eyebrow">Rekomendasi tanaman</p>
+    {% if result %}
+      <p class="eyebrow">Hasil rekomendasi tanaman</p>
+    {% else %}
+      <p class="eyebrow">Rekomendasi tanaman</p>
+    {% endif %}
     <h1 id="recommendation-title">FLORA</h1>
-    <p class="recommendation-title-line">cari tanaman yang pas.</p>
-    <p>
-      Isi pilihan seperti memilih moodboard mini. Setiap jawaban membantu FLORA
-      mencocokkan kondisi ruang dengan data tanaman hias.
-    </p>
+    {% if result %}
+      <p class="recommendation-title-line">pilihan tanamanmu sudah siap.</p>
+      <p>
+        FLORA menampilkan tanaman yang paling sesuai berdasarkan jawabanmu,
+        lengkap dengan ringkasan perawatan dan alasan kecocokannya.
+      </p>
+    {% else %}
+      <p class="recommendation-title-line">cari tanaman yang pas.</p>
+      <p>
+        Isi pilihan seperti memilih moodboard mini. Setiap jawaban membantu FLORA
+        mencocokkan kondisi ruang dengan data tanaman hias.
+      </p>
+    {% endif %}
   </div>
 </section>
 
@@ -52,25 +64,20 @@
                 <span class="result-status">{{ item.status }}</span>
               </div>
               <h3>{{ item.name }}</h3>
-              <p class="result-description">{{ item.description }}</p>
-              <p class="result-care">{{ item.care }}</p>
+              <p class="result-description">{{ item.long_description }}</p>
+
+              <div class="result-note">
+                <strong>Catatan singkat</strong>
+                <p>{{ item.care }}</p>
+              </div>
 
               <div class="result-group" aria-label="Alasan kecocokan">
-                <strong>Alasan kecocokan</strong>
+                <strong>Mengapa cocok?</strong>
                 <ul class="match-list">
                   {% for reason in item.reasons %}
                     <li>{{ reason }}</li>
                   {% endfor %}
                 </ul>
-              </div>
-
-              <div class="result-group" aria-label="Atribut tanaman">
-                <strong>Atribut tanaman</strong>
-                <div class="profile-tags">
-                  {% for badge in item.badges %}
-                    <span>{{ badge }}</span>
-                  {% endfor %}
-                </div>
               </div>
             </div>
           </article>
@@ -87,7 +94,7 @@
           <h2>Jawab satu per satu</h2>
         </div>
         <div class="progress-copy" aria-live="polite">
-          <span data-step-count>1</span> / {{ questions|length }}
+          <span data-step-count>1</span><span class="progress-total"> / {{ questions|length }}</span>
         </div>
       </div>
 
@@ -99,7 +106,6 @@
         {% for question in questions %}
           <fieldset class="question-step" data-step="{{ loop.index }}">
             <legend tabindex="-1">
-              <span>Pertanyaan {{ loop.index }}</span>
               {{ question.question }}
             </legend>
             <div class="choice-grid">
