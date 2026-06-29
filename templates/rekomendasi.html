@@ -3,7 +3,7 @@
 {% block title %}FLORA{% endblock %}
 
 {% block content %}
-<section class="page-hero recommendation-hero" aria-labelledby="recommendation-title">
+<section class="page-hero recommendation-hero{% if result %} recommendation-hero--result{% endif %}" aria-labelledby="recommendation-title">
   <div>
     {% if result %}
       <p class="eyebrow">Hasil rekomendasi tanaman</p>
