@@ -52,6 +52,7 @@ FLOWER_IMAGE_DIR = "img/flowers"
 FALLBACK_PLANT_IMAGE = f"{FLOWER_IMAGE_DIR}/default.jpg"
 FLOWER_IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp")
 MAX_RECOMMENDATIONS = 3
+MAX_REASON_CHIPS = 4
 
 STATUS_LABELS = ["Paling Disarankan", "Alternatif Terbaik", "Alternatif Lain yang Cocok"]
 BADGE_FIELDS = [
@@ -66,6 +67,47 @@ BADGE_FIELDS = [
     "pet_safe",
     "berduri_tajam",
 ]
+
+REASON_PRIORITY = (
+    "cahaya",
+    "posisi",
+    "penyiraman",
+    "ruang",
+    "ukuran",
+    "perawatan",
+    "pet_safe",
+    "berduri_tajam",
+    "budget",
+    "jenis_tampilan",
+)
+
+REASON_TEXT = {
+    ("cahaya", "rendah"): "Tahan di tempat minim cahaya",
+    ("cahaya", "sedang"): "Cocok untuk cahaya tidak langsung",
+    ("cahaya", "tinggi"): "Cocok untuk area terang",
+    ("penyiraman", "jarang"): "Tidak perlu sering disiram",
+    ("penyiraman", "sedang"): "Butuh penyiraman sedang",
+    ("penyiraman", "sering"): "Cocok jika rutin disiram",
+    ("posisi", "indoor"): "Ideal untuk dalam ruangan",
+    ("posisi", "outdoor"): "Cocok untuk teras atau halaman",
+    ("ruang", "kecil"): "Muat untuk meja atau rak",
+    ("ruang", "sedang"): "Cocok untuk sudut ruangan",
+    ("ruang", "besar"): "Cocok untuk ruang luas",
+    ("ukuran", "kecil"): "Ukurannya compact",
+    ("ukuran", "sedang"): "Ukurannya seimbang untuk dekorasi",
+    ("ukuran", "besar"): "Memberi kesan dekoratif yang kuat",
+    ("perawatan", "mudah"): "Ramah untuk pemula",
+    ("perawatan", "sedang"): "Perawatannya masih cukup mudah",
+    ("perawatan", "sulit"): "Cocok untuk pengguna yang telaten",
+    ("pet_safe", "ya"): "Relatif aman untuk hewan",
+    ("berduri_tajam", "tidak"): "Tidak berduri tajam",
+    ("budget", "rendah"): "Pilihan lebih terjangkau",
+    ("budget", "sedang"): "Sesuai budget menengah",
+    ("budget", "tinggi"): "Cocok untuk pilihan premium",
+    ("jenis_tampilan", "daun"): "Fokus pada dekorasi daun",
+    ("jenis_tampilan", "bunga"): "Memberi tampilan berbunga",
+    ("jenis_tampilan", "kaktus"): "Tampilan kaktus yang khas",
+}
 
 
 def _normalize(value: Any) -> str:
@@ -176,8 +218,8 @@ def _validate_dataset(
 
 
 def get_dataset_stats() -> dict[str, int]:
-    questions, plants, _, _, _ = _load_dataset()
-    return {"plant_count": len(plants), "question_count": len(questions)}
+    questions, plants, rules, _, _ = _load_dataset()
+    return {"plant_count": len(plants), "question_count": len(questions), "rule_count": len(rules)}
 
 
 def get_questions() -> list[dict[str, Any]]:
@@ -339,7 +381,7 @@ def _build_recommendations(
 
         plant = _get_plant_by_key(plants, plant_key)
         matched_count, matched_attributes = _count_plant_attributes(plant, answers)
-        reasons = _build_reason_list(rule, plant, matched_attributes)
+        reasons = _build_reason_list(rule, plant, matched_attributes, answers)
         index = len(recommendations)
         recommendations.append(
             {
@@ -347,6 +389,7 @@ def _build_recommendations(
                 "status": STATUS_LABELS[index],
                 "name": rule_display_names.get(plant_key, _format_plant_name(plant)),
                 "description": str(plant["deskripsi_singkat"]),
+                "long_description": _build_long_description(plant),
                 "care": str(plant["alasan_rekomendasi"]),
                 "reasons": reasons,
                 "badges": _build_badges(plant),
@@ -374,16 +417,12 @@ def _count_plant_attributes(plant: pd.Series, answers: dict[str, str]) -> tuple[
             pet_safe = plant_map.get("pet_safe", "")
             if answer == "ya" and pet_safe == "ya":
                 matched_attributes.append("aman untuk rumah dengan hewan peliharaan")
-            elif answer == "tidak":
-                matched_attributes.append("tidak membutuhkan prioritas aman untuk hewan")
             continue
 
         if variable == THORN_COMFORT_VARIABLE:
             has_thorns = plant_map.get(THORN_PLANT_ATTRIBUTE, "")
             if answer == "tidak" and has_thorns == "tidak":
                 matched_attributes.append("tidak berduri atau tajam")
-            elif answer == "ya":
-                matched_attributes.append("sesuai untuk pengguna yang nyaman dengan duri")
             continue
 
         if variable in plant_map and plant_map[variable] == answer:
@@ -392,20 +431,66 @@ def _count_plant_attributes(plant: pd.Series, answers: dict[str, str]) -> tuple[
     return len(matched_attributes), matched_attributes[:5]
 
 
-def _build_reason_list(rule: dict[str, Any], plant: pd.Series, matched_attributes: list[str]) -> list[str]:
-    reasons = [
-        f"{_field_label(variable)} {_title_value(expected)} sesuai pilihan."
-        for variable, expected in rule["matched_conditions"][:4]
-    ]
+def _build_reason_list(
+    rule: dict[str, Any],
+    plant: pd.Series,
+    matched_attributes: list[str],
+    answers: dict[str, str],
+) -> list[str]:
+    plant_map = {_normalize(key): _normalize(value) for key, value in plant.to_dict().items()}
+    matched_rule_variables = {variable for variable, _ in rule["matched_conditions"]}
+    reasons: list[str] = []
 
-    for attribute in matched_attributes:
-        sentence = f"{attribute[:1].upper()}{attribute[1:]}."
-        if sentence not in reasons:
-            reasons.append(sentence)
+    for field in REASON_PRIORITY:
+        text = _reason_for_field(field, plant_map, answers, matched_rule_variables)
+        if text:
+            _append_unique_reason(reasons, text)
+        if len(reasons) == MAX_REASON_CHIPS:
+            break
 
     if not reasons:
-        reasons.append(str(plant["alasan_rekomendasi"]))
-    return reasons[:5]
+        for attribute in matched_attributes:
+            _append_unique_reason(reasons, f"{attribute[:1].upper()}{attribute[1:]}")
+            if len(reasons) == MAX_REASON_CHIPS:
+                break
+
+    if not reasons:
+        fallback = str(plant["alasan_rekomendasi"]).strip()
+        if fallback:
+            _append_unique_reason(reasons, fallback.rstrip("."))
+
+    return reasons[:MAX_REASON_CHIPS]
+
+def _reason_for_field(
+    field: str,
+    plant_map: dict[str, str],
+    answers: dict[str, str],
+    matched_rule_variables: set[str],
+) -> str | None:
+    if field == "pet_safe":
+        if answers.get(PET_VARIABLE) == "ya" and plant_map.get("pet_safe") == "ya":
+            return REASON_TEXT[(field, "ya")]
+        return None
+
+    if field == THORN_PLANT_ATTRIBUTE:
+        if answers.get(THORN_COMFORT_VARIABLE) == "tidak" and plant_map.get(field) == "tidak":
+            return REASON_TEXT[(field, "tidak")]
+        return None
+
+    answer = answers.get(field, "")
+    if not answer or answer in FREE_VALUES:
+        return None
+    if field == "jenis_tampilan" and answer == "bebas":
+        return None
+    if plant_map.get(field) != answer and field not in matched_rule_variables:
+        return None
+    return REASON_TEXT.get((field, answer))
+
+def _append_unique_reason(reasons: list[str], reason: str) -> None:
+    normalized_reason = _normalize(reason).rstrip(".")
+    existing = {_normalize(item).rstrip(".") for item in reasons}
+    if normalized_reason and normalized_reason not in existing:
+        reasons.append(reason.rstrip("."))
 
 
 def _build_badges(plant: pd.Series) -> list[str]:
@@ -426,6 +511,20 @@ def _build_badges(plant: pd.Series) -> list[str]:
 
 def _format_plant_name(plant: pd.Series) -> str:
     return str(plant["nama_tanaman"]).strip()
+
+def _build_long_description(plant: pd.Series) -> str:
+    name = _format_plant_name(plant)
+    description = str(plant["deskripsi_singkat"]).strip().rstrip(".")
+    details = [
+        REASON_TEXT.get(("posisi", _normalize(plant["posisi"])), "").lower(),
+        REASON_TEXT.get(("cahaya", _normalize(plant["cahaya"])), "").lower(),
+        REASON_TEXT.get(("penyiraman", _normalize(plant["penyiraman"])), "").lower(),
+        REASON_TEXT.get(("perawatan", _normalize(plant["perawatan"])), "").lower(),
+    ]
+    detail_text = ", ".join(detail for detail in details if detail)
+    if detail_text:
+        return f"{description}. {name} menjadi pilihan yang pas karena {detail_text}, sehingga mudah dijadikan tanaman hias yang selaras dengan kebutuhan ruang dan rutinitas perawatanmu."
+    return f"{description}. {name} dapat menjadi tanaman hias yang membantu memperkuat suasana ruang tanpa membuat tampilan terasa berlebihan."
 
 
 def _slugify_image_name(value: Any) -> str:

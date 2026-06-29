@@ -25,7 +25,7 @@ def test_dataset_stats_and_questions_are_loaded():
     stats = recommender.get_dataset_stats()
     questions = recommender.get_questions()
 
-    assert stats == {"plant_count": 30, "question_count": 10}
+    assert stats == {"plant_count": 30, "question_count": 10, "rule_count": 63}
     assert len(questions) == 10
     assert questions[0]["variable"] == "cahaya"
     assert questions[0]["choices"] == [
@@ -57,7 +57,9 @@ def test_recommend_plants_returns_ranked_recommendations():
     assert result["recommendations"][0]["name"] == "Sansevieria"
     assert result["recommendations"][0]["status"] == "Paling Disarankan"
     assert result["recommendations"][0]["image_filename"] == "img/flowers/sansevieria.jpg"
-    assert len(result["recommendations"][0]["reasons"]) <= 5
+    assert len(result["recommendations"][0]["reasons"]) <= recommender.MAX_REASON_CHIPS
+    assert all("sesuai pilihan" not in reason.lower() for reason in result["recommendations"][0]["reasons"])
+    assert len(result["recommendations"][0]["reasons"]) == len(set(result["recommendations"][0]["reasons"]))
     assert len(result["recommendations"][0]["badges"]) == len(recommender.BADGE_FIELDS)
 
 
@@ -74,6 +76,34 @@ def test_condition_matching_treats_free_values_as_wildcards():
     assert recommender._condition_matches("daun", "bebas")
     assert recommender._condition_matches("tidak_masalah", "tinggi")
     assert not recommender._condition_matches("daun", "bunga")
+
+def test_reasons_use_special_pet_and_thorn_rules():
+    plant_map = {"pet_safe": "ya", "berduri_tajam": "tidak"}
+
+    assert recommender._reason_for_field(
+        "pet_safe",
+        plant_map,
+        {"hewan_peliharaan": "ya"},
+        set(),
+    ) == "Relatif aman untuk hewan"
+    assert recommender._reason_for_field(
+        "pet_safe",
+        plant_map,
+        {"hewan_peliharaan": "tidak"},
+        set(),
+    ) is None
+    assert recommender._reason_for_field(
+        "berduri_tajam",
+        plant_map,
+        {"nyaman_duri": "tidak"},
+        set(),
+    ) == "Tidak berduri tajam"
+    assert recommender._reason_for_field(
+        "berduri_tajam",
+        plant_map,
+        {"nyaman_duri": "ya"},
+        set(),
+    ) is None
 
 
 def test_parse_conditions_normalizes_rule_text():
