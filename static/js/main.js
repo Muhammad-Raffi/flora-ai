@@ -71,6 +71,12 @@ if (form) {
     renderStep({ focusQuestion: true });
   };
 
+  const clearStepAnswer = (stepIndex) => {
+    steps[stepIndex]?.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.checked = false;
+    });
+  };
+
   const advanceFromChoice = () => {
     window.clearTimeout(autoAdvanceTimer);
     if (!currentStepAnswered()) return;
@@ -90,7 +96,22 @@ if (form) {
   prevButton?.addEventListener("click", () => {
     window.clearTimeout(autoAdvanceTimer);
     setAutoAdvancing(false);
-    moveToStep(activeStep - 1);
+    const previousStep = Math.max(0, activeStep - 1);
+    clearStepAnswer(previousStep);
+    moveToStep(previousStep);
+  });
+
+  form.addEventListener("keydown", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) || target.type !== "radio") return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (!steps[activeStep]?.contains(target)) return;
+
+    event.preventDefault();
+    if (!target.checked) {
+      target.checked = true;
+      target.dispatchEvent(new Event("change", { bubbles: true }));
+    }
   });
 
   form.addEventListener("change", (event) => {
