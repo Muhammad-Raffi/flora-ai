@@ -30,6 +30,33 @@ async function expectImageAssetsReachable(page) {
   expect(failures).toEqual([]);
 }
 
+async function completeRecommendationForm(page) {
+  await page.goto("/rekomendasi");
+
+  for (const [name, value] of answers) {
+    const choice = page.locator(`.question-step:not([hidden]) label.choice-chip:has(input[name="${name}"][value="${value}"])`);
+    await expect(choice).toHaveCount(1);
+    await choice.click();
+  }
+}
+
+async function expectResultTextAlignedWithCards(page) {
+  const boxes = await page.evaluate(() => {
+    const hero = document.querySelector(".recommendation-hero--result > div").getBoundingClientRect();
+    const summary = document.querySelector(".result-summary").getBoundingClientRect();
+    const card = document.querySelector(".result-card").getBoundingClientRect();
+
+    return {
+      heroLeft: hero.left,
+      summaryLeft: summary.left,
+      cardLeft: card.left,
+    };
+  });
+
+  expect(Math.abs(boxes.heroLeft - boxes.cardLeft)).toBeLessThanOrEqual(2);
+  expect(Math.abs(boxes.summaryLeft - boxes.cardLeft)).toBeLessThanOrEqual(2);
+}
+
 test("main pages render without overflow or broken images", async ({ page }) => {
   for (const path of ["/", "/rekomendasi", "/tentang"]) {
     await page.goto(path);
@@ -78,6 +105,17 @@ test("recommendation form completes and resets", async ({ page }) => {
   await page.getByRole("link", { name: "Rekomendasi Lagi" }).click();
   await expect(page.getByRole("heading", { name: "Jawab satu per satu" })).toBeVisible();
 });
+
+for (const width of [950, 1024, 1366]) {
+  test(`recommendation result text aligns with result cards at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await completeRecommendationForm(page);
+
+    await expect(page.locator(".recommendation-hero--result")).toBeVisible();
+    await expectResultTextAlignedWithCards(page);
+    await expectNoHorizontalOverflow(page);
+  });
+}
 
 test("previous button preserves selected answers", async ({ page }) => {
   await page.goto("/rekomendasi");
