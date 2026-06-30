@@ -1,3 +1,4 @@
+from app import REFERENCES
 from ai.recommender import get_questions
 
 
@@ -123,6 +124,14 @@ def test_tentang_removes_dummy_member(client):
     assert b"Anggota Kelompok" in response.data
     assert b"Referensi" in response.data
 
+
+def test_tentang_reference_cards_are_external_links(client):
+    response = client.get("/tentang")
+
+    assert response.status_code == 200
+    for reference in REFERENCES:
+        url = reference["url"].encode()
+        assert b'class="reference-item" href="' + url + b'" target="_blank" rel="noopener noreferrer"' in response.data
 
 def test_method_not_allowed_and_404_are_safe(client):
     method_response = client.put("/rekomendasi")

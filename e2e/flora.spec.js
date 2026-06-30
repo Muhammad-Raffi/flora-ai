@@ -70,6 +70,27 @@ test("main pages render without overflow or broken images", async ({ page }) => 
   }
 });
 
+test("about references are clickable links without visible raw URLs", async ({ page }) => {
+  await page.goto("/tentang");
+
+  const referenceTitles = [
+    "Implementasi Inferensi Forward Chaining Pada Sistem",
+    "Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining",
+    "Growing Indoor Plants with Success",
+  ];
+  const visibleText = await page.locator("main").innerText();
+
+  for (const title of referenceTitles) {
+    const link = page.getByRole("link", { name: new RegExp(title) });
+    await expect(link).toHaveCount(1);
+    const href = await link.getAttribute("href");
+    expect(href).toMatch(/^https:\/\//);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(visibleText).not.toContain(href);
+  }
+});
+
 test("recommendation form completes and resets", async ({ page }) => {
   await page.goto("/rekomendasi");
 
