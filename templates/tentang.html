@@ -63,11 +63,11 @@
 
   <div class="reference-list">
     {% for reference in references %}
-      <article class="reference-item">
+      <a class="reference-item" href="{{ reference.url }}" target="_blank" rel="noopener noreferrer">
         <span>Ref {{ loop.index }}</span>
-        <h3>{{ reference.split(" - ")[0] }}</h3>
-        <p>{{ reference.split(" - ")[1] if " - " in reference else "Referensi pendukung FLORA" }}</p>
-      </article>
+        <h3>{{ reference.title }}</h3>
+        <p>{{ reference.description }}</p>
+      </a>
     {% endfor %}
   </div>
 </section>

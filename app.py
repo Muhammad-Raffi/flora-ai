@@ -13,9 +13,21 @@ app = Flask(__name__)
 # PROJECT_ROOT = Path(__file__).resolve().parent
 
 REFERENCES = [
-    "Implementasi Inferensi Forward Chaining Pada Sistem - Sebagai Jurnal Utama",
-    "Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining - Sebagai Jurnal Pendukung",
-    "Growing Indoor Plants with Success - Sebagai Referensi Ilmiah Kondisi Tanaman",
+    {
+        "title": "Implementasi Inferensi Forward Chaining Pada Sistem",
+        "description": "Sebagai Jurnal Utama",
+        "url": "https://jurnal.itg.ac.id/index.php/algoritma/article/view/1411",
+    },
+    {
+        "title": "Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining",
+        "description": "Sebagai Jurnal Pendukung",
+        "url": "https://ejurnal.seminar-id.com/index.php/josyc/article/view/4926",
+    },
+    {
+        "title": "Growing Indoor Plants with Success",
+        "description": "Sebagai Referensi Ilmiah Kondisi Tanaman",
+        "url": "https://ucanr.edu/sites/default/files/2020-07/330400.pdf",
+    },
 ]
 
 MEMBERS = [
