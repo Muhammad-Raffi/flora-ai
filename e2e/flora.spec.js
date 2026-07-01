@@ -74,7 +74,7 @@ test("about references are clickable links without visible raw URLs", async ({ p
   await page.goto("/tentang");
 
   const referenceTitles = [
-    "Implementasi Inferensi Forward Chaining Pada Sistem",
+    "Implementasi Forward Chaining Pada Sistem Pakar Deteksi Kesuburan Tanah Sebagai Media Tanah di Lahan Pertanian",
     "Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining",
     "Growing Indoor Plants with Success",
   ];

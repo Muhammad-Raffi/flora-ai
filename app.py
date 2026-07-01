@@ -14,18 +14,18 @@ app = Flask(__name__)
 
 REFERENCES = [
     {
-        "title": "Implementasi Inferensi Forward Chaining Pada Sistem",
-        "description": "Sebagai Jurnal Utama",
+        "title": "Implementasi Forward Chaining Pada Sistem Pakar Deteksi Kesuburan Tanah Sebagai Media Tanah di Lahan Pertanian",
+        "description": "Jurnal utama untuk dasar metode Forward Chaining pada sistem pakar berbasis web.",
         "url": "https://jurnal.itg.ac.id/index.php/algoritma/article/view/1411",
     },
     {
         "title": "Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining",
-        "description": "Sebagai Jurnal Pendukung",
+        "description": "Jurnal pendukung penerapan Forward Chaining pada sistem pakar bidang pertanian.",
         "url": "https://ejurnal.seminar-id.com/index.php/josyc/article/view/4926",
     },
     {
         "title": "Growing Indoor Plants with Success",
-        "description": "Sebagai Referensi Ilmiah Kondisi Tanaman",
+        "description": "Referensi ilmiah untuk kondisi pertumbuhan tanaman indoor, seperti cahaya, suhu, kelembaban, air, dan media tanam.",
         "url": "https://ucanr.edu/sites/default/files/2020-07/330400.pdf",
     },
 ]
