@@ -16,7 +16,7 @@ REFERENCES = [
     {
         "title": "Implementasi Forward Chaining Pada Sistem Pakar Deteksi Kesuburan Tanah Sebagai Media Tanah di Lahan Pertanian",
         "description": "Jurnal utama untuk dasar metode Forward Chaining pada sistem pakar berbasis web.",
-        "url": "https://jurnal.itg.ac.id/index.php/algoritma/article/view/1411",
+        "url": "https://jurnal.itg.ac.id/index.php/algoritma/article/view/1411/1278",
     },
     {
         "title": "Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining",
