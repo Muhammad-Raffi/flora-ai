@@ -26,7 +26,7 @@ REFERENCES = [
     {
         "title": "Growing Indoor Plants with Success",
         "description": "Referensi ilmiah untuk kondisi pertumbuhan tanaman indoor, seperti cahaya, suhu, kelembaban, air, dan media tanam.",
-        "url": "https://ucanr.edu/sites/default/files/2020-07/330400.pdf",
+        "url": "https://fieldreport.caes.uga.edu/wp-content/uploads/2025/08/B-1318_6.pdf",
     },
 ]
 
