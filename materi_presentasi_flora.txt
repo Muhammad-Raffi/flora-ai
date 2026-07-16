@@ -1,0 +1,307 @@
+MATERI PRESENTASI FLORA-AI
+Versi Siap Dibacakan Saat Presentasi
+
+Sumber utama:
+- penjelasan_flora.txt
+- HASIL_UAS_FLORA_AI.txt
+- kode aplikasi FLORA-AI
+- dataset Excel FLORA
+- aplikasi web FLORA online
+
+
+PEMBUKAAN SINGKAT
+
+Assalamu'alaikum warahmatullahi wabarakatuh.
+Selamat pagi/siang Bapak/Ibu dosen.
+
+Kami akan menjelaskan program kami yang bernama FLORA-AI. FLORA-AI adalah aplikasi web rekomendasi tanaman hias. Tujuannya membantu pengguna memilih tanaman yang cocok berdasarkan kondisi ruangan, kebiasaan merawat tanaman, budget, dan preferensi tampilan.
+
+Jadi, pengguna tidak perlu bingung memilih tanaman satu per satu. Pengguna cukup menjawab beberapa pertanyaan, lalu sistem akan memberikan rekomendasi tanaman yang paling sesuai.
+
+
+1. METODOLOGI YANG DIPAKAI
+
+Metodologi yang kami gunakan adalah forward chaining atau rule-based system. Dalam bahasa sederhana, forward chaining adalah cara mengambil keputusan dari fakta yang sudah diketahui.
+
+Fakta dalam sistem kami adalah jawaban pengguna. Misalnya pengguna memilih cahaya rendah, penyiraman jarang, tanaman untuk indoor, ruang kecil, dan perawatan mudah.
+
+Setelah jawaban itu masuk, sistem akan mencocokkannya dengan aturan yang sudah tersedia di dataset. Aturan ini bentuknya seperti:
+
+"Jika kondisi pengguna seperti ini, maka tanaman yang cocok adalah tanaman tertentu."
+
+Jadi cara berpikir sistemnya mirip konsultasi singkat. Pengguna menyampaikan kondisi, lalu sistem mencari aturan yang paling cocok, kemudian memberikan hasil rekomendasi.
+
+Hal penting yang perlu kami tekankan:
+FLORA-AI bukan sistem machine learning. Sistem ini tidak belajar otomatis dari data seperti model ML. FLORA-AI menggunakan aturan yang sudah dibuat di dataset. Karena itu, hasilnya lebih mudah dijelaskan.
+
+Alasan kami memilih forward chaining:
+1. Cocok untuk sistem rekomendasi sederhana.
+2. Cocok untuk dataset yang belum terlalu besar.
+3. Hasil rekomendasinya mudah dijelaskan kepada pengguna dan dosen penguji.
+4. Setiap keputusan bisa dilacak dari jawaban pengguna ke aturan yang dipakai.
+
+Kalimat singkat saat presentasi:
+"Metode yang kami gunakan adalah forward chaining. Sistem memulai dari jawaban pengguna, lalu mencocokkannya dengan aturan di dataset, kemudian menghasilkan rekomendasi tanaman."
+
+
+2. DATASET YANG DIGUNAKAN
+
+Dataset yang digunakan FLORA-AI adalah dataset berbentuk file Excel. Dataset ini menjadi dasar pengetahuan sistem.
+
+Perlu dijelaskan dengan aman:
+Karena sistem ini bukan machine learning, dataset kami tidak digunakan untuk melatih model. Dataset digunakan sebagai sumber data tanaman, pertanyaan, dan aturan rekomendasi.
+
+Isi dataset terdiri dari 3 bagian utama:
+
+1. Data tanaman
+Bagian ini berisi daftar tanaman hias. Jumlah tanaman dalam dataset adalah 30 tanaman.
+
+Setiap tanaman memiliki informasi seperti:
+- nama tanaman,
+- nama umum lain,
+- deskripsi singkat,
+- kebutuhan cahaya,
+- kebutuhan penyiraman,
+- cocok indoor atau outdoor,
+- ukuran ruang,
+- tingkat perawatan,
+- aman atau tidak untuk hewan peliharaan,
+- berduri atau tidak,
+- budget,
+- jenis tampilan,
+- ukuran tanaman,
+- alasan rekomendasi,
+- tips perawatan.
+
+2. Data pertanyaan
+Bagian ini berisi pertanyaan yang akan dijawab pengguna. Jumlah pertanyaannya adalah 10 pertanyaan.
+
+Pertanyaan tersebut membahas:
+- kondisi cahaya,
+- frekuensi penyiraman,
+- posisi tanaman,
+- luas tempat,
+- tingkat perawatan,
+- hewan peliharaan,
+- kenyamanan terhadap duri,
+- budget,
+- jenis tampilan,
+- ukuran tanaman.
+
+3. Data rules atau aturan
+Bagian ini berisi aturan rekomendasi. Jumlah rules dalam dataset adalah 63 rules.
+
+Rules ini menghubungkan jawaban pengguna dengan tanaman yang cocok. Misalnya, jika jawaban pengguna cocok dengan aturan tertentu, maka sistem akan merekomendasikan tanaman yang sesuai dengan aturan tersebut.
+
+Tentang label dataset:
+Karena sistem ini bukan machine learning, label dataset dalam arti ML tidak digunakan. Yang paling mendekati label adalah kolom hasil pada rules, yaitu nama tanaman yang direkomendasikan.
+
+Contohnya:
+Jika kondisi pengguna cocok dengan aturan tertentu, hasilnya bisa berupa Sansevieria, Zamia Dollar, Sirih Gading, atau tanaman lain yang ada di dataset.
+
+Dari mana dataset didapat?
+Dataset yang dipakai adalah dataset internal proyek FLORA-AI yang tersimpan di file Excel pada repository program. Untuk mendukung dasar metode dan pemilihan variabel tanaman, proyek juga memakai referensi tentang forward chaining dan referensi kondisi pertumbuhan tanaman indoor.
+
+Kalimat aman saat presentasi:
+"Dataset kami tidak dipakai untuk melatih model machine learning. Dataset ini menjadi basis pengetahuan sistem, berisi data tanaman, pertanyaan, dan rules yang menghubungkan jawaban pengguna dengan rekomendasi tanaman."
+
+
+3. DEMO SISTEM SAMBIL MENJELASKAN
+
+Bagian ini adalah urutan demo yang bisa dibacakan sambil membuka aplikasi FLORA.
+
+Langkah 1: Buka halaman Beranda
+
+Saat membuka aplikasi, jelaskan:
+"Ini adalah halaman awal FLORA-AI. Di sini pengguna bisa melihat identitas aplikasi dan masuk ke halaman rekomendasi. Tujuan aplikasi ini adalah membantu memilih tanaman hias berdasarkan preferensi pengguna."
+
+Di halaman beranda juga terlihat bahwa FLORA meminta pengguna menjawab 10 preferensi singkat.
+
+Langkah 2: Masuk ke halaman Rekomendasi
+
+Klik atau buka menu Rekomendasi.
+
+Jelaskan:
+"Pada halaman rekomendasi, pengguna diminta menjawab pertanyaan satu per satu. Pertanyaan ini berhubungan dengan kondisi ruangan dan kebiasaan pengguna dalam merawat tanaman."
+
+Pertanyaan yang muncul antara lain:
+- kondisi cahaya,
+- seberapa sering bisa menyiram,
+- tanaman diletakkan indoor atau outdoor,
+- luas tempat,
+- tingkat perawatan,
+- ada atau tidak hewan peliharaan,
+- nyaman atau tidak dengan tanaman berduri,
+- budget,
+- jenis tampilan tanaman,
+- ukuran tanaman.
+
+Langkah 3: Isi contoh jawaban
+
+Untuk contoh demo, gunakan jawaban berikut:
+- cahaya: rendah,
+- penyiraman: jarang,
+- posisi: indoor,
+- ruang: kecil,
+- perawatan: mudah,
+- hewan peliharaan: tidak,
+- nyaman dengan duri: tidak,
+- budget: rendah,
+- jenis tampilan: daun,
+- ukuran: kecil.
+
+Sambil mengisi, jelaskan:
+"Saya memilih kondisi ini karena ingin menunjukkan contoh pengguna yang membutuhkan tanaman indoor, mudah dirawat, tidak perlu sering disiram, dan cocok untuk ruang kecil."
+
+Langkah 4: Tampilkan hasil rekomendasi
+
+Setelah semua jawaban dipilih, sistem akan menampilkan hasil rekomendasi.
+
+Untuk contoh jawaban tersebut, hasil yang muncul adalah Sansevieria sebagai rekomendasi utama.
+
+Jelaskan:
+"Sistem merekomendasikan Sansevieria karena tanaman ini cocok untuk cahaya rendah, cocok di dalam ruangan, tidak perlu sering disiram, dan sesuai untuk ruang kecil."
+
+Langkah 5: Jelaskan proses di balik demo
+
+Jelaskan dengan bahasa sederhana:
+"Saat jawaban pengguna dikirim, sistem tidak memilih tanaman secara acak. Sistem mencocokkan jawaban tersebut dengan aturan di dataset. Aturan yang paling cocok akan menghasilkan rekomendasi tanaman."
+
+Langkah 6: Hubungkan demo dengan metode
+
+Jelaskan:
+"Demo ini menunjukkan cara kerja forward chaining. Sistem mulai dari fakta, yaitu jawaban pengguna. Setelah itu sistem mencocokkan fakta dengan aturan. Dari aturan yang cocok, sistem menghasilkan rekomendasi."
+
+Kalimat ringkas untuk bagian demo:
+"Dari demo ini, bisa dilihat bahwa FLORA-AI bekerja dengan membaca jawaban pengguna, mencocokkannya dengan dataset dan rules, lalu menampilkan tanaman yang paling sesuai beserta alasannya."
+
+
+4. ARSITEKTUR SISTEM
+
+Arsitektur sistem FLORA-AI bisa dijelaskan secara sederhana menjadi 4 bagian:
+
+1. Frontend
+
+Frontend adalah bagian yang dilihat dan digunakan oleh pengguna.
+
+Pada FLORA-AI, frontend berupa halaman web. Di bagian ini pengguna melihat:
+- halaman beranda,
+- halaman rekomendasi,
+- form pertanyaan,
+- hasil rekomendasi,
+- gambar tanaman,
+- alasan kenapa tanaman cocok.
+
+Teknologi frontend yang digunakan adalah HTML, CSS, dan JavaScript.
+
+Penjelasan mudahnya:
+"Frontend adalah wajah aplikasi. Semua yang dilihat dan diklik pengguna berada di bagian frontend."
+
+2. Backend
+
+Backend adalah bagian yang bekerja di belakang layar.
+
+Pada FLORA-AI, backend dibuat menggunakan Python dengan framework Flask. Backend bertugas menerima jawaban pengguna, membaca dataset, menjalankan proses pencocokan aturan, dan mengirimkan hasil rekomendasi kembali ke halaman web.
+
+Penjelasan mudahnya:
+"Backend adalah otak aplikasi. Bagian ini memproses jawaban pengguna dan menentukan tanaman yang direkomendasikan."
+
+3. Dataset
+
+Dataset adalah sumber pengetahuan sistem.
+
+Dataset FLORA berbentuk Excel dan berisi:
+- 30 data tanaman,
+- 10 pertanyaan,
+- 63 aturan rekomendasi.
+
+Penjelasan mudahnya:
+"Dataset adalah buku panduan sistem. Dari dataset inilah sistem tahu tanaman apa yang cocok untuk kondisi tertentu."
+
+4. Deployment atau aplikasi online
+
+FLORA-AI dapat dibuka melalui web online. Artinya pengguna bisa membuka aplikasi lewat browser tanpa harus melihat kode program.
+
+Penjelasan mudahnya:
+"Deployment adalah proses membuat aplikasi bisa diakses secara online."
+
+Alur arsitektur secara sederhana:
+
+Pengguna membuka web.
+Pengguna menjawab pertanyaan.
+Frontend mengirim jawaban ke backend.
+Backend membaca dataset.
+Backend mencocokkan jawaban dengan rules.
+Backend mengirim hasil rekomendasi.
+Frontend menampilkan tanaman yang cocok.
+
+Kalimat presentasi:
+"Arsitektur FLORA-AI terdiri dari frontend sebagai tampilan, backend sebagai pemroses, dataset Excel sebagai sumber pengetahuan, dan deployment web agar aplikasi bisa diakses pengguna."
+
+
+5. PENUTUP
+
+Kesimpulannya, FLORA-AI adalah aplikasi rekomendasi tanaman hias yang membantu pengguna memilih tanaman sesuai kondisi ruang dan preferensi perawatan.
+
+Metode yang digunakan adalah forward chaining atau rule-based system. Sistem bekerja dari jawaban pengguna, mencocokkannya dengan aturan dalam dataset, lalu menghasilkan rekomendasi tanaman.
+
+Dataset FLORA berisi 30 tanaman, 10 pertanyaan, dan 63 rules. Dataset ini tidak digunakan untuk melatih machine learning, tetapi digunakan sebagai sumber pengetahuan dan aturan rekomendasi.
+
+Dari demo, kita bisa melihat bahwa pengguna cukup menjawab pertanyaan, lalu sistem dapat memberikan hasil seperti Sansevieria, lengkap dengan alasan kenapa tanaman itu cocok.
+
+Kelebihan FLORA-AI:
+- mudah digunakan,
+- hasil rekomendasi mudah dijelaskan,
+- cocok untuk presentasi dan pembelajaran AI berbasis sistem pakar,
+- bisa dikembangkan dengan menambah tanaman dan rules baru.
+
+Batasan FLORA-AI:
+- sistem belum belajar otomatis,
+- hasil sangat bergantung pada dataset dan aturan,
+- jumlah tanaman masih terbatas,
+- belum ada fitur feedback pengguna.
+
+Kalimat penutup:
+"Dengan FLORA-AI, kami mencoba menerapkan konsep kecerdasan buatan sederhana dalam bentuk sistem pakar rekomendasi tanaman hias. Sistem ini belum memakai machine learning, tetapi sudah menunjukkan bagaimana komputer dapat membantu mengambil keputusan berdasarkan fakta dan aturan."
+
+Terima kasih.
+Wassalamu'alaikum warahmatullahi wabarakatuh.
+
+
+BONUS Q&A SINGKAT UNTUK DOSEN
+
+1. Apakah FLORA-AI memakai machine learning?
+Tidak. FLORA-AI memakai rule-based system atau forward chaining. Dataset digunakan sebagai sumber aturan, bukan untuk melatih model.
+
+2. Kalau bukan machine learning, kenapa disebut AI?
+Karena FLORA-AI memakai konsep sistem pakar, yaitu komputer mengambil keputusan berdasarkan fakta dan aturan. Sistem pakar termasuk salah satu pendekatan dalam AI.
+
+3. Apa metodologi yang dipakai?
+Metodologinya adalah forward chaining. Sistem mulai dari jawaban pengguna, lalu mencocokkannya dengan rules, kemudian menghasilkan rekomendasi.
+
+4. Apa isi dataset?
+Dataset berisi data tanaman, pertanyaan, dan rules. Jumlahnya 30 tanaman, 10 pertanyaan, dan 63 rules.
+
+5. Apa label datasetnya?
+Karena bukan machine learning, label dataset dalam arti ML tidak digunakan. Yang paling mendekati label adalah hasil pada rules, yaitu nama tanaman yang direkomendasikan.
+
+6. Dari mana datasetnya?
+Dataset berasal dari file Excel internal proyek FLORA-AI. Referensi ilmiah digunakan untuk mendukung metode forward chaining dan faktor kondisi tanaman indoor.
+
+7. Apa contoh hasil rekomendasinya?
+Contohnya Sansevieria. Tanaman ini direkomendasikan untuk kondisi cahaya rendah, penyiraman jarang, posisi indoor, ruang kecil, dan perawatan mudah.
+
+8. Apa frontend dan backend-nya?
+Frontend adalah tampilan web yang digunakan pengguna. Backend adalah Python dengan Flask yang memproses jawaban dan menghasilkan rekomendasi.
+
+9. Kenapa memakai Excel sebagai dataset?
+Karena Excel mudah dibaca, mudah diedit, dan cocok untuk dataset kecil yang berisi tanaman, pertanyaan, dan aturan.
+
+10. Apa kekurangan sistem ini?
+Sistem belum belajar otomatis dan kualitas hasil sangat bergantung pada kelengkapan dataset serta rules.
+
+11. Bagaimana pengembangannya ke depan?
+Sistem bisa dikembangkan dengan menambah data tanaman, menambah rules, menambahkan feedback pengguna, dan jika dataset sudah besar, bisa dipertimbangkan pendekatan machine learning.
+
+12. Kenapa hasilnya bisa dijelaskan?
+Karena sistem berbasis rules. Setiap rekomendasi berasal dari aturan yang bisa ditelusuri dan dijelaskan kembali kepada pengguna.

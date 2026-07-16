@@ -1,0 +1,810 @@
+HASIL UAS FLORA-AI
+Bahan Penjelasan Program, Dataset, Kode Python, Referensi, dan Script Presentasi
+
+Disusun untuk presentasi UAS program FLORA-AI.
+Sumber utama: repository lokal FLORA-AI, dataset References/dataset_FLORA.xlsx, deployed app https://flora-ai-ochre.vercel.app/, dan referensi kredibel yang dicantumkan di bagian referensi.
+
+Catatan anti-halusinasi:
+- Program ini dijelaskan sebagai sistem rekomendasi berbasis rule/forward logic atau forward chaining sederhana.
+- Tidak ditemukan proses training machine learning, neural network, deep learning, epoch, train-test split, atau evaluasi akurasi model di kode.
+- Jika asal detail pengumpulan dataset ditanyakan, jawaban yang bertanggung jawab adalah: file dataset ada di repository, tetapi metode pengumpulan data mentah tidak ditemukan di kode/dataset/referensi.
+
+
+TEMUAN PENTING / PERBEDAAN SUMBER
+
+1. Repo lokal, test lokal, dan deployed app sama-sama menunjukkan aplikasi inti FLORA berjalan sebagai rekomendasi tanaman hias.
+2. Endpoint deployed /healthz mengembalikan status ok dengan plants=30 dan questions=10.
+3. Deployed /, /rekomendasi, dan /tentang memuat teks utama yang sesuai dengan pemeriksaan: "Mulai Rekomendasi", "Jawab satu per satu", "Muhammad Raffi", dan "Referensi".
+4. Deployed POST /rekomendasi dengan jawaban valid menampilkan "Hasil rekomendasi", "Sansevieria", "Foto tanaman Sansevieria", dan "Mengapa cocok?".
+5. Test lokal memastikan dummy text "Long afternoon" dan "secret (?)" tidak muncul di /tentang. Pemeriksaan deployed juga tidak menemukan dua teks dummy itu.
+6. README menyebut FLORA sebagai "Forward Logic Ornamental Recommendation Assistant", sedangkan app.py context processor memakai tagline "Flower & Leaf Ornamental Recommendation Assistant". Ini perbedaan nama panjang/tagline, bukan perbedaan fungsi program.
+
+
+1. JUDUL
+
+FLORA-AI: Sistem Rekomendasi Tanaman Hias Berbasis Forward Logic dengan Flask, Python, dan Dataset Excel
+
+
+2. RINGKASAN AWAM 1 HALAMAN
+
+FLORA-AI adalah aplikasi web yang membantu pengguna memilih tanaman hias yang cocok dengan kondisi rumah atau ruangannya. Pengguna tidak perlu memahami tanaman satu per satu. Pengguna cukup menjawab beberapa pertanyaan singkat, misalnya kondisi cahaya, seberapa sering bisa menyiram, apakah tanaman diletakkan indoor atau outdoor, besar ruang yang tersedia, budget, dan apakah ada hewan peliharaan.
+
+Setelah jawaban dikirim, FLORA-AI mencocokkan jawaban tersebut dengan dataset tanaman. Dataset itu berupa file Excel bernama References/dataset_FLORA.xlsx. Di dalamnya ada daftar tanaman, daftar pertanyaan, dan daftar aturan rekomendasi. Aturan ini mirip cara berpikir "jika kondisi A dan B terpenuhi, maka tanaman X cocok". Misalnya, jika cahaya rendah, penyiraman jarang, posisi indoor, ruang kecil, perawatan mudah, budget rendah, jenis tampilan daun, dan ukuran kecil, maka sistem dapat merekomendasikan Sansevieria.
+
+Bagian "AI" pada FLORA-AI bukan berarti program ini melatih model machine learning seperti neural network. Dari pemeriksaan kode, tidak ditemukan proses training model, tidak ada epoch, tidak ada split data training-testing, dan tidak ada perhitungan akurasi model. AI di sini lebih tepat dijelaskan sebagai sistem pakar atau sistem rekomendasi berbasis aturan. Sistem seperti ini tetap termasuk pendekatan kecerdasan buatan klasik karena komputer memakai aturan untuk meniru proses pengambilan keputusan sederhana.
+
+Program web dibuat dengan Flask dan Python. Flask menangani halaman web, route, form, dan tampilan HTML. Python di file ai/recommender.py menangani logika rekomendasi. Dataset dibaca memakai pandas dan openpyxl. Saat pengguna membuka halaman rekomendasi, daftar pertanyaan diambil dari dataset. Saat pengguna mengirim jawaban, program memvalidasi jawaban, mencocokkan aturan, mengurutkan hasil paling cocok, lalu menampilkan maksimal 3 tanaman rekomendasi.
+
+Kelebihan pendekatan ini adalah hasilnya mudah dijelaskan saat presentasi. Kita bisa menunjukkan alasan kenapa tanaman direkomendasikan, karena keputusan berasal dari rules yang bisa dibaca. Kekurangannya, sistem tidak otomatis belajar sendiri. Jika ingin menambah tanaman atau memperbaiki hasil, dataset dan rules perlu diperbarui secara manual. Jadi kualitas rekomendasi sangat bergantung pada kelengkapan dan konsistensi dataset.
+
+
+3. APA SEBENARNYA "AI" DI FLORA-AI?
+
+FLORA-AI lebih tepat disebut sistem rekomendasi berbasis rule/forward logic. Maksudnya, program mengambil fakta dari jawaban pengguna, lalu mencocokkannya dengan aturan di dataset.
+
+Contoh sederhana:
+- Fakta dari pengguna: cahaya rendah, penyiraman jarang, indoor, ruang kecil.
+- Rule di dataset: jika beberapa kondisi tersebut terpenuhi, hasilnya Sansevieria.
+- Output: sistem menampilkan Sansevieria sebagai rekomendasi.
+
+Bedanya dengan machine learning:
+- Machine learning biasanya melatih model dari data latih, lalu model belajar pola secara statistik.
+- FLORA-AI tidak melatih model. FLORA-AI membaca dataset Excel dan mencocokkan rules.
+- Tidak ditemukan file model, training script, epoch, loss, akurasi model, train-test split, atau library ML seperti scikit-learn, TensorFlow, atau PyTorch.
+
+Bukti:
+- requirements.txt hanya memuat Flask, pandas, openpyxl, gunicorn, dan waitress untuk aplikasi utama.
+- ai/recommender.py memakai pandas.ExcelFile, pd.read_excel, validasi dataset, parsing rule, dan ranking rekomendasi.
+- tests/test_recommender.py menguji rule-based behavior seperti wildcard, parsing kondisi, validasi dataset, dan hasil rekomendasi.
+
+Kesimpulan aman untuk presentasi:
+"AI pada FLORA-AI adalah AI berbasis sistem pakar sederhana. Program ini menggunakan forward logic/rule-based reasoning, bukan machine learning yang dilatih."
+
+
+4. GAMBARAN TEKNOLOGI
+
+| Komponen | File/library | Fungsi | Bukti |
+|---|---|---|---|
+| Web framework | Flask | Membuat route, menerima request, dan render template | app.py memakai Flask, route "/", "/rekomendasi", "/tentang", "/healthz" |
+| Template HTML | Jinja/Flask template | Menampilkan halaman dan hasil rekomendasi | templates/rekomendasi.html memakai questions, result, errors |
+| Logika rekomendasi | ai/recommender.py | Membaca dataset, validasi, evaluasi rules, ranking tanaman | Fungsi get_questions(), validate_answers(), recommend_plants() |
+| Dataset | References/dataset_FLORA.xlsx | Menyimpan tanaman, pertanyaan, dan rules | Sheet tanaman, pertanyaan, rules |
+| Pembaca Excel | pandas + openpyxl | Membaca file .xlsx menjadi DataFrame | requirements.txt dan ai/recommender.py |
+| Cache dataset | functools.lru_cache | Menghindari pembacaan dataset berulang | @lru_cache(maxsize=1) pada _load_dataset() |
+| UI rekomendasi | templates/rekomendasi.html + static/js/main.js | Form step-by-step dan tampilan hasil | Template memakai fieldset, radio input, progress |
+| Validasi input | validate_answers() | Menolak jawaban kosong atau nilai di luar pilihan | ai/recommender.py dan tests/test_recommender.py |
+| Keamanan header | SECURITY_HEADERS | Menambah CSP, nosniff, referrer policy, permissions policy | app.py add_security_headers() |
+| Health check | /healthz | Melaporkan status dataset sederhana | app.py healthz(), tests/test_app_routes.py |
+| Deployment | Vercel/WSGI server | Aplikasi online di flora-ai-ochre.vercel.app | README dan pemeriksaan deployed app |
+
+
+5. ALUR PROGRAM DARI PENGGUNA
+
+1. Pengguna membuka https://flora-ai-ochre.vercel.app/.
+2. Halaman Beranda menampilkan identitas FLORA dan tombol "Mulai Rekomendasi".
+3. Pengguna masuk ke halaman /rekomendasi.
+4. Pengguna melihat form preferensi tanaman dengan progress 1 / 10.
+5. Pengguna menjawab 10 pertanyaan:
+   - kondisi cahaya,
+   - frekuensi penyiraman,
+   - posisi tanaman,
+   - luas ruang,
+   - tingkat perawatan,
+   - ada/tidak hewan peliharaan,
+   - nyaman/tidak dengan duri,
+   - budget,
+   - jenis tampilan,
+   - ukuran tanaman.
+6. Setelah jawaban lengkap, form dikirim ke server.
+7. Server memeriksa apakah semua jawaban valid.
+8. Jika ada jawaban kosong atau tidak valid, halaman menampilkan pesan error.
+9. Jika jawaban valid, server mencocokkan jawaban dengan rules di dataset.
+10. Sistem memilih tanaman paling cocok, lalu membuat alasan rekomendasi.
+11. Pengguna melihat hasil berupa tanaman rekomendasi, foto, alasan cocok, dan catatan singkat.
+
+
+6. ALUR PROGRAM DARI KODE
+
+Diagram teks:
+
+Browser
+-> GET /rekomendasi
+-> app.py route rekomendasi()
+-> get_questions()
+-> _load_dataset()
+-> References/dataset_FLORA.xlsx sheet pertanyaan
+-> templates/rekomendasi.html menampilkan form
+-> pengguna memilih jawaban
+-> POST /rekomendasi
+-> request.form dibaca oleh app.py
+-> validate_answers()
+-> jika valid: recommend_plants()
+-> _load_dataset()
+-> _evaluate_rules()
+-> _parse_conditions()
+-> _condition_matches()
+-> ranking berdasarkan matched_count, attribute_matches, total_conditions
+-> _build_recommendations()
+-> _build_reason_list()
+-> _image_for_plant()
+-> _build_summary()
+-> templates/rekomendasi.html menampilkan hasil
+
+Penjelasan singkat:
+- app.py adalah pintu masuk web.
+- ai/recommender.py adalah otak rekomendasi.
+- dataset Excel adalah sumber data dan aturan.
+- templates/rekomendasi.html adalah wajah yang dilihat pengguna.
+
+
+7. PENJELASAN KODE PYTHON PER BAGIAN
+
+A. app.py
+
+1. Import library
+app.py mengimpor os, Flask, redirect, render_template, request, url_for, serta fungsi dari ai.recommender. Ini menunjukkan app.py tidak menyimpan logika rekomendasi utama, tetapi memanggil modul rekomendasi terpisah.
+
+2. app = Flask(__name__)
+Baris ini membuat objek aplikasi Flask. Objek ini menjadi pusat route dan konfigurasi aplikasi.
+
+3. REFERENCES
+REFERENCES adalah daftar referensi yang ditampilkan di halaman Tentang. Isinya tiga referensi: dua jurnal forward chaining dan satu referensi tanaman indoor.
+
+4. MEMBERS
+MEMBERS berisi data anggota kelompok: nama, NIM, kelas, dan peran.
+
+5. SECURITY_HEADERS
+Bagian ini berisi header keamanan seperti Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, dan Permissions-Policy. Fungsinya membatasi sumber script/style/gambar dan mengurangi risiko tertentu. Ini bukan berarti aplikasi sempurna aman, tetapi ada upaya dasar keamanan HTTP.
+
+6. inject_globals()
+Fungsi ini memakai @app.context_processor. Artinya data yang dikembalikan fungsi ini bisa tersedia di template. Data yang dimasukkan adalah app_name, tagline, dan dataset_stats. dataset_stats diambil dari get_dataset_stats().
+
+7. add_security_headers(response)
+Fungsi ini memakai @app.after_request. Artinya setelah route menghasilkan response, Flask menjalankan fungsi ini untuk menambahkan security headers.
+
+8. route "/"
+Fungsi beranda() merender templates/beranda.html. Halaman ini menjadi halaman awal aplikasi.
+
+9. route "/favicon.ico"
+Fungsi favicon() mengalihkan request favicon ke static/img/icon.png.
+
+10. route "/healthz"
+Fungsi healthz() mengambil statistik dataset, lalu mengembalikan JSON sederhana: status ok, jumlah plants, dan jumlah questions. Test lokal memastikan hasilnya {"status": "ok", "plants": 30, "questions": 10}.
+
+11. route "/rekomendasi" GET dan POST
+Fungsi rekomendasi() adalah alur utama:
+- Saat GET, program memanggil get_questions() dan menampilkan form.
+- Saat POST, program membaca request.form berdasarkan variabel pertanyaan.
+- Jawaban divalidasi dengan validate_answers().
+- Jika tidak ada error, program memanggil recommend_plants().
+- Hasil, error, questions, dan answers dikirim ke templates/rekomendasi.html.
+
+12. route "/tentang"
+Fungsi tentang() merender templates/tentang.html dengan references dan members.
+
+13. if __name__ == "__main__"
+Bagian ini menjalankan app secara lokal jika file app.py dieksekusi langsung. Debug aktif jika environment variable FLASK_DEBUG bernilai "1".
+
+
+B. ai/recommender.py
+
+1. DATASET_PATH dan STATIC_DIR
+DATASET_PATH menunjuk ke References/dataset_FLORA.xlsx. STATIC_DIR menunjuk ke folder static. Dua path ini dipakai untuk membaca dataset dan mencari gambar tanaman.
+
+2. REQUIRED_SHEETS
+REQUIRED_SHEETS berisi tiga sheet wajib: tanaman, pertanyaan, rules. Jika salah satu sheet tidak ada, _load_dataset() akan menaikkan ValueError.
+
+3. REQUIRED_PLANT_COLUMNS, REQUIRED_QUESTION_COLUMNS, REQUIRED_RULE_COLUMNS
+Bagian ini mendefinisikan kolom wajib di setiap sheet. Tujuannya menjaga dataset tidak rusak atau kurang kolom.
+
+4. FREE_VALUES
+FREE_VALUES berisi "bebas" dan "tidak_masalah". Dalam _condition_matches(), nilai ini diperlakukan sebagai wildcard. Artinya jika actual atau expected adalah nilai bebas, kondisi dianggap cocok.
+
+5. Variabel hewan dan duri
+PET_VARIABLE = "hewan_peliharaan".
+THORN_COMFORT_VARIABLE = "nyaman_duri".
+THORN_PLANT_ATTRIBUTE = "berduri_tajam".
+Tiga konstanta ini membuat logika khusus untuk rumah dengan hewan dan kenyamanan terhadap duri.
+
+6. MAX_RECOMMENDATIONS dan MAX_REASON_CHIPS
+MAX_RECOMMENDATIONS = 3 membatasi hasil maksimal tiga tanaman. MAX_REASON_CHIPS = 4 membatasi alasan singkat maksimal empat item.
+
+7. _normalize()
+Fungsi ini membersihkan nilai: mengubah NaN menjadi string kosong, menghapus spasi depan/belakang, dan mengubah teks menjadi huruf kecil. Ini penting agar "Rendah" dan "rendah" diperlakukan sama.
+
+8. _title_value()
+Fungsi ini membuat label tampilan dari nilai dataset, misalnya "rendah" menjadi "Rendah" dan "tidak_masalah" menjadi "Tidak Masalah".
+
+9. _split_choices()
+Fungsi ini memecah pilihan seperti "rendah|sedang|tinggi" menjadi list ["rendah", "sedang", "tinggi"].
+
+10. _load_dataset()
+Fungsi ini membaca dataset Excel. Langkahnya:
+- membuka file Excel dengan pandas.ExcelFile,
+- mengecek sheet wajib,
+- membaca sheet tanaman, pertanyaan, rules dengan pd.read_excel,
+- mengisi nilai kosong dengan fillna(""),
+- memvalidasi kolom,
+- membuat peta kode/nama tanaman,
+- memvalidasi rules.
+
+Fungsi ini memakai @lru_cache(maxsize=1), sehingga hasil pembacaan dataset disimpan. Jika fungsi dipanggil berulang, program tidak membaca Excel dari awal terus-menerus.
+
+11. _validate_columns()
+Fungsi ini memastikan setiap sheet memiliki kolom wajib. Jika ada kolom hilang, program memberi error yang jelas.
+
+12. _build_plant_key_map()
+Fungsi ini membuat peta dari kode tanaman, nama tanaman, dan nama umum lain ke kode tanaman. Contoh: Sansevieria dan Snake Plant bisa diarahkan ke kode T001.
+
+13. _build_rule_display_names()
+Fungsi ini membuat peta kode tanaman ke nama tanaman yang akan ditampilkan.
+
+14. _validate_dataset()
+Fungsi ini memastikan rules valid:
+- variabel di rules harus ada di sheet pertanyaan,
+- nilai di rules harus ada di pilihan pertanyaan,
+- hasil rules harus merujuk tanaman yang ada di sheet tanaman.
+
+15. get_dataset_stats()
+Fungsi ini mengembalikan jumlah tanaman, jumlah pertanyaan, dan jumlah rules. Dari dataset saat ini: 30 tanaman, 10 pertanyaan, 63 rules.
+
+16. get_questions()
+Fungsi ini mengubah sheet pertanyaan menjadi format list dictionary yang mudah dipakai template. Setiap pertanyaan memiliki code, variable, question, choices, dan step.
+
+17. validate_answers()
+Fungsi ini memastikan setiap pertanyaan sudah dijawab dan nilai jawaban termasuk pilihan yang diizinkan. Jika kosong, muncul error "belum dipilih". Jika nilai tidak ada di pilihan, muncul error "tidak valid".
+
+18. recommend_plants()
+Fungsi ini menjalankan proses rekomendasi utama:
+- normalisasi jawaban,
+- evaluasi semua rules,
+- pilih rules yang aktif atau semua rules jika tidak ada rule aktif,
+- urutkan berdasarkan matched_count, attribute_matches, total_conditions,
+- bangun daftar rekomendasi,
+- bangun summary.
+
+19. _evaluate_rules()
+Fungsi ini membaca setiap rule, memecah kondisi, mencari tanaman hasil, menghitung kondisi yang cocok, menghitung kecocokan atribut tanaman, lalu menandai apakah rule aktif penuh.
+
+20. _condition_matches()
+Fungsi ini membandingkan jawaban dengan nilai rule. Jika salah satunya "bebas" atau "tidak_masalah", hasilnya cocok.
+
+21. _parse_conditions()
+Fungsi ini memecah teks kondisi dengan " AND ". Contoh:
+"cahaya=rendah AND jenis_tampilan=daun" menjadi dictionary {"cahaya": "rendah", "jenis_tampilan": "daun"}.
+
+22. _resolve_plant_key()
+Fungsi ini mencari kode tanaman dari hasil rule. Hasil rule bisa berupa kode, nama tanaman, atau nama umum lain.
+
+23. _get_plant_by_key()
+Fungsi ini mengambil baris tanaman berdasarkan kode tanaman.
+
+24. _build_recommendations()
+Fungsi ini membuat daftar hasil akhir. Setiap item punya rank, status, name, description, long_description, care, reasons, badges, image_filename, dan matched_rule. Fungsi ini juga menghindari tanaman duplikat dan berhenti setelah mencapai MAX_RECOMMENDATIONS.
+
+25. _count_plant_attributes()
+Fungsi ini menghitung atribut tanaman yang sesuai dengan jawaban pengguna. Untuk hewan dan duri, ada perlakuan khusus.
+
+26. _build_reason_list() dan _reason_for_field()
+Fungsi ini membangun alasan singkat kenapa tanaman cocok. Contohnya: "Tahan di tempat minim cahaya", "Ideal untuk dalam ruangan", "Tidak perlu sering disiram".
+
+27. _build_badges()
+Fungsi ini membuat label atribut tanaman seperti "Cahaya: Rendah" atau "Budget: Rendah". Namun test lokal memastikan tampilan akhir tidak menampilkan bagian "Atribut tanaman" di halaman hasil.
+
+28. _build_long_description()
+Fungsi ini membuat deskripsi panjang yang lebih natural untuk hasil rekomendasi.
+
+29. _image_for_plant()
+Fungsi ini membuat slug nama tanaman, lalu mencari file gambar di static/img/flowers dengan ekstensi .jpg, .jpeg, .png, atau .webp. Jika tidak ditemukan, sistem memakai img/flowers/default.jpg.
+
+30. _build_summary()
+Fungsi ini membuat ringkasan hasil, misalnya "Sansevieria menjadi pilihan utama untuk kondisi cahaya Rendah dan posisi Indoor."
+
+
+8. PENJELASAN DATASET
+
+Path dataset:
+References/dataset_FLORA.xlsx
+
+Daftar sheet:
+1. tanaman
+2. pertanyaan
+3. rules
+
+Jumlah baris:
+- tanaman: 30 baris
+- pertanyaan: 10 baris
+- rules: 63 baris
+
+A. Sheet tanaman
+
+Sheet tanaman adalah "database tanaman". Setiap baris mewakili satu tanaman hias.
+
+Kolom pada sheet tanaman:
+- kode_tanaman: kode unik tanaman, misalnya T001.
+- nama_tanaman: nama utama tanaman, misalnya Sansevieria.
+- nama_umum_lain: nama lain, misalnya Snake Plant.
+- deskripsi_singkat: penjelasan singkat tanaman.
+- cahaya: kebutuhan cahaya, misalnya rendah/sedang/tinggi.
+- penyiraman: kebutuhan penyiraman, misalnya jarang/sedang/sering.
+- posisi: indoor atau outdoor.
+- ruang: kecil/sedang/besar.
+- perawatan: mudah/sedang/sulit.
+- pet_safe: apakah relatif aman untuk rumah dengan hewan, ya/tidak.
+- berduri_tajam: apakah tanaman berduri atau tajam, ya/tidak.
+- budget: rendah/sedang/tinggi.
+- jenis_tampilan: daun/bunga/kaktus.
+- ukuran: kecil/sedang/besar.
+- alasan_rekomendasi: catatan kenapa tanaman cocok.
+- tips_perawatan: tips perawatan di dataset, tetapi pada template hasil final yang dibaca tidak terlihat dipakai langsung.
+
+Contoh 3 baris awal sheet tanaman:
+1. T001 | Sansevieria | Snake Plant | cahaya rendah | penyiraman jarang | posisi indoor | ruang kecil | perawatan mudah | budget rendah | jenis daun | ukuran kecil.
+2. T002 | Zamia Dollar | ZZ Plant | cahaya rendah | penyiraman jarang | posisi indoor | ruang kecil | perawatan mudah | budget sedang | jenis daun | ukuran kecil.
+3. T003 | Sirih Gading | Pothos | cahaya rendah | penyiraman sedang | posisi indoor | ruang kecil | perawatan mudah | budget rendah | jenis daun | ukuran kecil.
+
+Daftar tanaman:
+Sansevieria, Zamia Dollar, Sirih Gading, Lili Paris, Lili Perdamaian, Monstera, Karet Kebo, Pakis Boston, Lidah Buaya, Palem Bambu, Kaktus Mini, Aglaonema, Melati, Mawar, Lavender, Anggrek Bulan, Bougenville, Anthurium, Puring, Calathea, Philodendron, Palem Kuning, Paku Tanduk Rusa, Begonia, Tapak Dara, Keladi Hias, Peperomia, Fittonia, Kembang Sepatu, Coleus.
+
+B. Sheet pertanyaan
+
+Sheet pertanyaan adalah "daftar pertanyaan yang ditampilkan di form".
+
+Kolom pada sheet pertanyaan:
+- kode_pertanyaan: kode pertanyaan, misalnya P001.
+- variabel: nama variabel yang dipakai kode dan rules.
+- pertanyaan: teks pertanyaan untuk pengguna.
+- pilihan: pilihan jawaban, dipisahkan dengan tanda "|".
+- keterangan: penjelasan arti pilihan.
+
+Daftar variabel pertanyaan dan pilihan:
+1. cahaya: rendah|sedang|tinggi
+2. penyiraman: jarang|sedang|sering
+3. posisi: indoor|outdoor
+4. ruang: kecil|sedang|besar
+5. perawatan: mudah|sedang|sulit
+6. hewan_peliharaan: ya|tidak
+7. nyaman_duri: ya|tidak
+8. budget: rendah|sedang|tinggi
+9. jenis_tampilan: bebas|daun|bunga|kaktus
+10. ukuran: kecil|sedang|besar
+
+Contoh 3 baris awal sheet pertanyaan:
+1. P001 | cahaya | Bagaimana kondisi cahaya di tempat tanaman akan diletakkan? | rendah|sedang|tinggi.
+2. P002 | penyiraman | Seberapa sering kamu bisa menyiram tanaman? | jarang|sedang|sering.
+3. P003 | posisi | Di mana tanaman akan diletakkan? | indoor|outdoor.
+
+C. Sheet rules
+
+Sheet rules adalah "aturan IF-THEN". Kolomnya:
+- kode_rule: kode unik rule, misalnya R001.
+- kondisi: daftar kondisi yang harus dicocokkan, dipisahkan dengan " AND ".
+- hasil: nama tanaman yang direkomendasikan jika rule cocok.
+
+Contoh 3 baris awal sheet rules:
+1. R001 -> kondisi lengkap dengan cahaya=rendah, penyiraman=jarang, posisi=indoor, ruang=kecil, perawatan=mudah, budget=rendah, ukuran=kecil, jenis_tampilan=daun, hewan_peliharaan=tidak, nyaman_duri=tidak -> hasil Sansevieria.
+2. R002 -> kondisi mirip, tetapi budget=sedang -> hasil Zamia Dollar.
+3. R003 -> penyiraman=sedang -> hasil Sirih Gading.
+
+D. Hubungan antar sheet
+
+Sheet pertanyaan menentukan variabel dan pilihan jawaban yang boleh dipilih pengguna. Sheet rules memakai variabel yang sama pada kolom kondisi. Sheet tanaman menyimpan atribut tanaman dan data tampilan. Jadi alurnya:
+
+pertanyaan -> jawaban pengguna -> rules -> hasil tanaman -> detail tanaman dari sheet tanaman -> tampilan hasil
+
+E. Efek penggunaan dataset
+
+1. Jika dataset lengkap dan konsisten, hasil rekomendasi lebih mudah dipahami.
+2. Jika ada variabel rule yang tidak ada di pertanyaan, _validate_dataset() akan menolak dataset.
+3. Jika hasil rule tidak ada di sheet tanaman, _validate_dataset() akan menolak dataset.
+4. Jika pilihan pertanyaan terlalu sederhana, hasil rekomendasi juga terbatas.
+5. Jika rules kurang lengkap, sistem tetap bisa memilih alternatif terbaik berdasarkan jumlah kondisi yang cocok.
+6. Karena berbasis rule, sistem transparan dan mudah dijelaskan.
+7. Karena tidak belajar otomatis, perubahan pengetahuan harus dilakukan dengan mengubah dataset/rules.
+
+
+9. CONTOH SIMULASI REKOMENDASI
+
+Sumber contoh:
+- tests/test_recommender.py fungsi valid_answers().
+- Pemeriksaan lokal dengan recommend_plants().
+- Pemeriksaan deployed POST /rekomendasi.
+
+Jawaban pengguna:
+- cahaya: rendah
+- penyiraman: jarang
+- posisi: indoor
+- ruang: kecil
+- perawatan: mudah
+- hewan_peliharaan: tidak
+- nyaman_duri: tidak
+- budget: rendah
+- jenis_tampilan: daun
+- ukuran: kecil
+
+Langkah sistem:
+1. app.py route /rekomendasi menerima POST.
+2. Jawaban diambil dari request.form.
+3. validate_answers() memastikan semua variabel terisi dan nilainya sesuai pilihan dataset.
+4. recommend_plants() menormalisasi jawaban.
+5. _evaluate_rules() mengevaluasi rules.
+6. _parse_conditions() memecah kondisi R001 dengan " AND ".
+7. _condition_matches() membandingkan jawaban dengan kondisi rule.
+8. R001 cocok penuh dengan jawaban pengguna.
+9. _build_recommendations() mengambil detail Sansevieria dari sheet tanaman.
+10. _image_for_plant() menemukan gambar img/flowers/sansevieria.jpg.
+11. _build_summary() membuat ringkasan.
+
+Hasil:
+- Ringkasan: "Sansevieria menjadi pilihan utama untuk kondisi cahaya Rendah dan posisi Indoor."
+- Rekomendasi 1: Sansevieria.
+- Status: Paling Disarankan.
+- Matched rule: R001.
+- Gambar: img/flowers/sansevieria.jpg.
+- Alasan: Tahan di tempat minim cahaya; Ideal untuk dalam ruangan; Tidak perlu sering disiram; Muat untuk meja atau rak.
+
+Penjelasan awam:
+Sistem melihat jawaban pengguna seperti daftar kebutuhan. Lalu sistem mencari aturan yang paling cocok. Karena jawaban ini sangat cocok dengan rule R001, tanaman yang keluar adalah Sansevieria.
+
+
+10. EFEK DAN KONSEKUENSI MEMAKAI DATASET/RULE-BASED SYSTEM
+
+A. Kelebihan
+
+1. Mudah dijelaskan
+Setiap rekomendasi bisa ditelusuri ke rule dan atribut dataset.
+
+2. Cocok untuk presentasi
+Dosen bisa melihat alur dari jawaban, rules, sampai hasil.
+
+3. Tidak butuh dataset besar untuk menjalankan rules
+Karena tidak melatih model ML, sistem bisa berjalan dengan dataset kecil selama rules dibuat rapi.
+
+4. Kontrol penuh
+Jika ingin tanaman tertentu muncul untuk kondisi tertentu, rules bisa diubah.
+
+5. Hasil konsisten
+Input yang sama akan menghasilkan proses rekomendasi yang sama.
+
+B. Kekurangan
+
+1. Tidak belajar otomatis
+Sistem tidak memperbaiki dirinya sendiri dari feedback pengguna.
+
+2. Bergantung pada kualitas dataset
+Jika atribut tanaman salah, hasil rekomendasi bisa salah.
+
+3. Rules bisa tidak lengkap
+Jika kombinasi jawaban tidak ada rule aktifnya, sistem memilih alternatif terbaik, bukan kecocokan penuh.
+
+4. Butuh perawatan manual
+Menambah tanaman atau memperbaiki rules harus dilakukan melalui dataset.
+
+5. Pilihan terbatas
+Karena pertanyaan hanya 10 dan pilihan sudah ditentukan, preferensi pengguna yang lebih kompleks belum tertangkap.
+
+C. Dampak jika dataset diperbarui
+
+Jika menambah tanaman baru:
+- Tambahkan baris di sheet tanaman.
+- Tambahkan rules yang menghasilkan tanaman tersebut.
+- Pastikan gambar tersedia di static/img/flowers atau fallback akan dipakai.
+
+Jika mengubah pilihan pertanyaan:
+- Ubah sheet pertanyaan.
+- Ubah rules agar nilai kondisi tetap valid.
+- Jalankan test agar _validate_dataset() tidak error.
+
+Jika mengubah rules:
+- Hasil rekomendasi bisa berubah.
+- Test yang mengharapkan Sansevieria untuk jawaban tertentu mungkin perlu diperbarui jika perubahan memang disengaja.
+
+
+11. VALIDASI DAN KEAMANAN
+
+A. Validasi input
+
+validate_answers() memastikan:
+1. Semua pertanyaan dijawab.
+2. Nilai jawaban termasuk pilihan yang tersedia di dataset.
+
+Contoh test:
+- tests/test_recommender.py menguji jawaban lengkap diterima.
+- tests/test_recommender.py menguji jawaban kosong dan nilai "banjir" ditolak.
+- tests/test_app_routes.py menguji input script pada cahaya tidak ditampilkan mentah sebagai script aktif.
+
+B. Validasi dataset
+
+_validate_columns() memastikan kolom wajib ada.
+_validate_dataset() memastikan:
+- variabel pada rules ada di sheet pertanyaan,
+- nilai pada rules termasuk pilihan pertanyaan,
+- hasil rules merujuk tanaman yang ada.
+
+C. Security headers
+
+app.py menambahkan:
+- Content-Security-Policy,
+- X-Content-Type-Options: nosniff,
+- Referrer-Policy,
+- Permissions-Policy.
+
+Penjelasan aman:
+Security headers ini adalah perlindungan dasar di level HTTP. Jangan mengklaim aplikasi sudah aman sepenuhnya. Klaim yang tepat: aplikasi sudah menambahkan beberapa header keamanan dasar.
+
+D. Health check
+
+/healthz mengembalikan:
+{"status": "ok", "plants": 30, "questions": 10}
+
+Fungsinya untuk smoke test bahwa aplikasi bisa membaca dataset dan route dasar berjalan.
+
+E. Test otomatis
+
+tests/test_app_routes.py memeriksa:
+- route utama render sukses,
+- healthz benar,
+- favicon redirect,
+- validasi error kosong,
+- input invalid tidak memunculkan script mentah,
+- hasil valid menampilkan Sansevieria,
+- halaman tentang memuat referensi dan anggota.
+
+tests/test_recommender.py memeriksa:
+- statistik dataset,
+- pertanyaan,
+- validasi jawaban,
+- rekomendasi ranking,
+- wildcard,
+- logika pet/duri,
+- parsing conditions,
+- fallback gambar,
+- validasi dataset.
+
+
+12. TABEL BUKTI
+
+| Klaim | Bukti file/sumber | Baris/fungsi/sheet terkait | Penjelasan singkat |
+|---|---|---|---|
+| FLORA-AI adalah aplikasi web rekomendasi tanaman hias | README.md | bagian pembuka | README menyebut aplikasi web rekomendasi tanaman hias berbasis Flask dan Python |
+| Pengguna utama adalah mahasiswa/dosen untuk demo | PRODUCT.md | Users | PRODUCT.md menjelaskan target pengguna untuk demo rekomendasi |
+| Framework web memakai Flask | app.py, requirements.txt | app = Flask(__name__), Flask>=3.0 | Flask menjadi framework utama aplikasi |
+| Route utama tersedia | app.py | beranda(), rekomendasi(), tentang(), healthz(), favicon() | app.py mendefinisikan endpoint utama |
+| Dataset dibaca dari Excel | ai/recommender.py | DATASET_PATH, _load_dataset() | DATASET_PATH menunjuk References/dataset_FLORA.xlsx |
+| Dataset memiliki 3 sheet wajib | ai/recommender.py, Excel | REQUIRED_SHEETS, sheet tanaman/pertanyaan/rules | Program menolak dataset jika sheet wajib hilang |
+| Dataset berisi 30 tanaman | Excel, tests/test_recommender.py | sheet tanaman, get_dataset_stats() | Test mengharapkan plant_count 30 |
+| Dataset berisi 10 pertanyaan | Excel, tests/test_recommender.py | sheet pertanyaan, get_questions() | Test mengharapkan question_count 10 |
+| Dataset berisi 63 rules | Excel, tests/test_recommender.py | sheet rules, get_dataset_stats() | Test mengharapkan rule_count 63 |
+| Pertanyaan form berasal dari dataset | ai/recommender.py, templates/rekomendasi.html | get_questions(), loop questions | Template menampilkan pertanyaan hasil get_questions() |
+| Jawaban divalidasi | ai/recommender.py | validate_answers() | Jawaban kosong/invalid menghasilkan error |
+| Rules memakai format AND | ai/recommender.py, sheet rules | _parse_conditions(), kondisi | Kondisi dipisahkan dengan " AND " |
+| Nilai bebas/tidak_masalah adalah wildcard | ai/recommender.py, tests/test_recommender.py | FREE_VALUES, _condition_matches() | Test memastikan wildcard dianggap cocok |
+| Ada logika khusus hewan | ai/recommender.py | PET_VARIABLE, pet_safe | Jika hewan_peliharaan ya dan pet_safe ya, alasan cocok muncul |
+| Ada logika khusus duri | ai/recommender.py | THORN_COMFORT_VARIABLE, berduri_tajam | Jika nyaman_duri tidak dan tanaman tidak berduri, alasan cocok muncul |
+| Rekomendasi maksimal 3 | ai/recommender.py | MAX_RECOMMENDATIONS = 3 | _build_recommendations() berhenti saat jumlah rekomendasi mencapai batas |
+| Gambar memakai fallback | ai/recommender.py, tests/test_recommender.py | _image_for_plant(), FALLBACK_PLANT_IMAGE | Jika gambar tidak ditemukan, dipakai default.jpg |
+| Contoh valid menghasilkan Sansevieria | tests/test_recommender.py, simulasi lokal | test_recommend_plants_returns_ranked_recommendations | Jawaban valid di test menghasilkan Sansevieria |
+| Deployed app membaca dataset | deployed /healthz | https://flora-ai-ochre.vercel.app/healthz | Mengembalikan status ok, plants 30, questions 10 |
+| Flask adalah WSGI web application framework | Flask docs | https://flask.palletsprojects.com/ | Mendukung penjelasan Flask sebagai framework web |
+| pandas read_excel membaca Excel ke DataFrame | pandas docs | https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html | Mendukung penjelasan pembacaan dataset |
+| openpyxl dipakai untuk file .xlsx | openpyxl docs, requirements.txt | https://openpyxl.readthedocs.io/ | Mendukung pembacaan file Excel modern |
+| lru_cache menyimpan hasil pemanggilan fungsi | Python docs | https://docs.python.org/3/library/functools.html | Mendukung alasan cache _load_dataset() |
+| Forward chaining relevan untuk sistem pakar | Jurnal ITG dan JoSYC | link pada referensi | Mendukung metode rule-based/forward chaining |
+| Faktor tanaman indoor mencakup kondisi lingkungan | University of Georgia | link pada referensi | Mendukung relevansi variabel cahaya/air/kondisi ruang |
+
+
+13. REFERENSI KREDIBEL
+
+1. Flask Documentation
+https://flask.palletsprojects.com/
+Dipakai untuk mendukung bahwa Flask adalah framework web WSGI yang cocok untuk route, request, dan template.
+
+2. Flask Tutorial - Views
+https://flask.palletsprojects.com/en/stable/tutorial/views/
+Dipakai untuk mendukung penjelasan route/view function seperti beranda(), rekomendasi(), dan tentang().
+
+3. Flask Tutorial - Templates
+https://flask.palletsprojects.com/en/stable/tutorial/templates/
+Dipakai untuk mendukung penjelasan render_template dan template HTML.
+
+4. pandas read_excel
+https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
+Dipakai untuk mendukung penjelasan bahwa pd.read_excel membaca file Excel menjadi DataFrame.
+
+5. openpyxl Documentation
+https://openpyxl.readthedocs.io/
+Dipakai untuk mendukung penggunaan openpyxl sebagai library Python untuk file Excel .xlsx.
+
+6. Python functools
+https://docs.python.org/3/library/functools.html
+Dipakai untuk mendukung penjelasan @lru_cache sebagai cache hasil fungsi.
+
+7. Vercel Flask
+https://vercel.com/docs/frameworks/backend/flask
+Dipakai untuk mendukung deployment Flask di Vercel.
+
+8. Vercel Python Runtime
+https://vercel.com/docs/functions/runtimes/python
+Dipakai untuk mendukung konteks aplikasi Python di Vercel.
+
+9. Implementasi Forward Chaining Pada Sistem Pakar Deteksi Kesuburan Tanah Sebagai Media Tanah di Lahan Pertanian
+https://jurnal.itg.ac.id/index.php/algoritma/article/view/1411
+Dipakai sebagai referensi metode forward chaining pada sistem pakar bidang pertanian.
+
+10. Sistem Pakar Pemilihan Bibit Padi Unggul dengan Metode Forward Chaining
+https://ejurnal.seminar-id.com/index.php/josyc/article/view/4926
+Dipakai sebagai referensi pendukung penerapan forward chaining pada sistem pakar bidang pertanian.
+
+11. University of Georgia - Growing Indoor Plants with Success
+https://fieldreport.caes.uga.edu/publications/B1318/growing-indoor-plants-with-success/
+Dipakai untuk mendukung bahwa tanaman indoor dipengaruhi kondisi seperti cahaya, air, kelembaban, suhu, nutrisi, dan media tanam. Tidak digunakan sebagai klaim bahwa dataset FLORA berasal langsung dari UGA.
+
+
+14. SCRIPT PRESENTASI UAS 5-10 MENIT
+
+Pembukaan:
+Assalamu'alaikum warahmatullahi wabarakatuh. Selamat pagi/siang Bapak/Ibu dosen. Kami dari Kelompok 3 akan mempresentasikan program kami yang bernama FLORA-AI. FLORA-AI adalah aplikasi web untuk membantu pengguna memilih tanaman hias yang sesuai dengan kondisi ruang dan preferensi perawatan.
+
+Masalah:
+Banyak orang ingin punya tanaman hias, tetapi bingung memilih tanaman yang cocok. Ada tanaman yang butuh cahaya tinggi, ada yang tahan minim cahaya, ada yang harus sering disiram, dan ada juga yang kurang cocok jika ada hewan peliharaan. Jika salah memilih, tanaman bisa cepat rusak atau tidak cocok dengan ruangan.
+
+Solusi FLORA-AI:
+Untuk membantu masalah itu, kami membuat FLORA-AI. Pengguna cukup menjawab 10 pertanyaan, seperti kondisi cahaya, penyiraman, posisi tanaman, ukuran ruang, tingkat perawatan, budget, dan preferensi tampilan. Setelah itu sistem akan mencocokkan jawaban dengan dataset tanaman dan rules yang sudah disiapkan.
+
+Demo alur aplikasi:
+Pada halaman Beranda, pengguna melihat identitas FLORA dan tombol Mulai Rekomendasi. Setelah masuk ke halaman Rekomendasi, pengguna menjawab pertanyaan satu per satu. Pertanyaan ini tidak ditulis manual di HTML, tetapi diambil dari dataset Excel melalui fungsi get_questions(). Setelah jawaban dikirim, route /rekomendasi di app.py membaca request.form, lalu memvalidasi jawaban dengan validate_answers(). Jika valid, sistem memanggil recommend_plants() untuk mencari rekomendasi.
+
+Penjelasan dataset:
+Dataset kami berada di file References/dataset_FLORA.xlsx. Di dalamnya ada tiga sheet utama. Sheet tanaman berisi 30 tanaman hias beserta atributnya, seperti cahaya, penyiraman, posisi, perawatan, budget, dan ukuran. Sheet pertanyaan berisi 10 pertanyaan yang tampil di form. Sheet rules berisi 63 aturan yang menghubungkan jawaban pengguna dengan hasil tanaman. Jadi dataset ini adalah dasar keputusan sistem.
+
+Penjelasan metode forward chaining/rule-based:
+Metode yang digunakan adalah forward logic atau forward chaining sederhana. Cara kerjanya dimulai dari fakta, yaitu jawaban pengguna. Kemudian sistem mencocokkan fakta itu dengan rules. Jika kondisi pada rule cocok, maka sistem menghasilkan kesimpulan berupa tanaman rekomendasi. Contohnya, jika cahaya rendah, penyiraman jarang, posisi indoor, ruang kecil, perawatan mudah, budget rendah, jenis tampilan daun, dan ukuran kecil, sistem dapat memilih Sansevieria.
+
+Penting untuk dijelaskan bahwa program ini bukan machine learning yang dilatih. Dari kode yang kami periksa, tidak ada proses training model, tidak ada epoch, tidak ada akurasi model, dan tidak ada neural network. AI di sini adalah sistem pakar sederhana berbasis aturan, sehingga hasilnya lebih mudah dijelaskan.
+
+Penjelasan kode Python utama:
+Kode utama ada di app.py dan ai/recommender.py. app.py mengatur route Flask seperti halaman Beranda, Rekomendasi, Tentang, dan healthz. app.py juga menambahkan security headers dasar. File ai/recommender.py adalah bagian logika rekomendasi. Di sana dataset dibaca dengan pandas.ExcelFile dan pd.read_excel. Fungsi _load_dataset() diberi @lru_cache agar pembacaan dataset tidak dilakukan berulang-ulang. Setelah itu ada fungsi validasi dataset, validasi jawaban, evaluasi rules, pembuatan ranking rekomendasi, alasan kecocokan, dan pencarian gambar tanaman.
+
+Contoh hasil:
+Untuk contoh jawaban cahaya rendah, penyiraman jarang, indoor, ruang kecil, perawatan mudah, tidak ada hewan peliharaan, tidak nyaman duri, budget rendah, jenis daun, dan ukuran kecil, sistem menghasilkan Sansevieria sebagai rekomendasi utama. Hasil ini sesuai dengan test lokal dan simulasi deployed app.
+
+Kelebihan:
+Kelebihan sistem ini adalah transparan, mudah dijelaskan, dan cocok untuk dataset kecil. Setiap hasil bisa dilacak dari jawaban pengguna ke rules dan data tanaman.
+
+Keterbatasan:
+Keterbatasannya, sistem tidak belajar otomatis. Jika ingin menambah pengetahuan, kita harus memperbarui dataset dan rules secara manual. Selain itu, kualitas rekomendasi sangat bergantung pada kualitas dataset.
+
+Penutup:
+Kesimpulannya, FLORA-AI adalah aplikasi rekomendasi tanaman hias berbasis Flask, Python, dataset Excel, dan forward chaining sederhana. Program ini membantu pengguna memilih tanaman hias dengan cara yang mudah, terstruktur, dan hasilnya bisa dijelaskan. Terima kasih. Wassalamu'alaikum warahmatullahi wabarakatuh.
+
+
+15. PREDIKSI PERTANYAAN DOSEN DAN JAWABAN
+
+1. Apakah ini benar AI?
+Jawaban: Ya, dalam kategori AI berbasis sistem pakar/rule-based reasoning. Program memakai aturan untuk mengambil keputusan. Namun ini bukan machine learning yang dilatih.
+
+2. Kenapa tidak memakai machine learning?
+Jawaban: Karena tujuan program adalah rekomendasi yang mudah dijelaskan. Dengan rule-based system, setiap hasil bisa dilacak dari jawaban ke rules dan dataset. Selain itu dataset saat ini kecil, yaitu 30 tanaman dan 63 rules, sehingga pendekatan rule-based lebih cocok untuk demo dan presentasi.
+
+3. Dari mana dataset berasal?
+Jawaban: Dataset yang dipakai program berasal dari file lokal References/dataset_FLORA.xlsx. Di dalam kode tidak ditemukan penjelasan detail metode pengumpulan data mentah. Referensi ilmiah dipakai sebagai pendukung konsep forward chaining dan faktor kondisi tanaman, bukan sebagai klaim bahwa seluruh dataset berasal langsung dari referensi tersebut.
+
+4. Bagaimana jika jawaban tidak cocok dengan rules?
+Jawaban: recommend_plants() mencari active_rules yang cocok penuh. Jika tidak ada, program memakai semua evaluated_rules lalu mengurutkannya berdasarkan matched_count, attribute_matches, dan total_conditions. Jadi sistem tetap mencoba memberi alternatif terbaik.
+
+5. Bagaimana sistem menentukan ranking?
+Jawaban: Rules diurutkan berdasarkan tiga nilai: jumlah kondisi rule yang cocok, jumlah atribut tanaman yang cocok dengan jawaban, dan jumlah total kondisi. Urutan ini terlihat di recommend_plants() pada ai/recommender.py.
+
+6. Apa risiko dataset kecil?
+Jawaban: Risiko utamanya adalah variasi rekomendasi terbatas. Jika kombinasi jawaban pengguna belum terwakili dengan baik di rules, hasil bisa berupa alternatif terbaik, bukan rekomendasi yang benar-benar ideal.
+
+7. Apa fungsi pandas dan openpyxl?
+Jawaban: pandas dipakai untuk membaca dan mengolah data Excel sebagai DataFrame. openpyxl adalah library pendukung untuk membaca file Excel .xlsx. Keduanya tercantum di requirements.txt.
+
+8. Kenapa memakai Flask?
+Jawaban: Flask ringan dan cocok untuk aplikasi web sederhana. Dalam program ini Flask menangani route, request form, render template, dan response JSON untuk /healthz.
+
+9. Apa fungsi @lru_cache?
+Jawaban: @lru_cache(maxsize=1) pada _load_dataset() menyimpan hasil pembacaan dataset. Jadi saat get_questions(), get_dataset_stats(), atau recommend_plants() dipanggil berulang, program tidak perlu membaca Excel dari awal terus.
+
+10. Bagaimana validasi input dilakukan?
+Jawaban: validate_answers() memeriksa setiap variabel pertanyaan. Jika jawaban kosong, sistem memberi error belum dipilih. Jika jawaban tidak ada di pilihan dataset, sistem memberi error tidak valid.
+
+11. Apa yang terjadi jika gambar tanaman tidak ada?
+Jawaban: _image_for_plant() mencari gambar berdasarkan slug nama tanaman dan beberapa ekstensi. Jika tidak ditemukan, sistem memakai fallback img/flowers/default.jpg.
+
+12. Bagaimana cara mengembangkan program ini?
+Jawaban: Bisa menambah tanaman di sheet tanaman, menambah rules, menambah pertanyaan, membuat panel admin untuk mengelola dataset, menambah feedback pengguna, atau mengembangkan model hybrid rule-based dan machine learning jika dataset sudah lebih besar.
+
+13. Kenapa ada sheet rules, bukan langsung mencocokkan atribut tanaman?
+Jawaban: Sheet rules memungkinkan keputusan dibuat lebih eksplisit. Atribut tanaman tetap dipakai untuk menghitung kecocokan tambahan, tetapi rules memberi hubungan "kondisi -> hasil" yang mudah dijelaskan.
+
+14. Apa bedanya pet_safe dan hewan_peliharaan?
+Jawaban: hewan_peliharaan adalah jawaban pengguna. pet_safe adalah atribut tanaman di dataset. Jika pengguna punya hewan dan tanaman pet_safe, sistem bisa memberi alasan kecocokan.
+
+15. Apakah tips_perawatan dipakai di tampilan?
+Jawaban: Di dataset ada kolom tips_perawatan. Namun dari template hasil templates/rekomendasi.html, yang ditampilkan sebagai catatan singkat adalah item.care dari alasan_rekomendasi. Jadi penggunaan langsung tips_perawatan pada tampilan hasil tidak ditemukan di template yang diperiksa.
+
+16. Apa bukti deployed app berjalan?
+Jawaban: /healthz deployed mengembalikan status ok dengan plants 30 dan questions 10. POST /rekomendasi dengan jawaban valid juga menampilkan hasil Sansevieria.
+
+
+16. BATASAN PROGRAM DAN SARAN PENGEMBANGAN
+
+A. Batasan
+
+1. Tidak otomatis belajar
+Program tidak memperbarui rules dari perilaku pengguna.
+
+2. Dataset kecil
+Dataset berisi 30 tanaman dan 63 rules. Ini cukup untuk demo, tetapi belum tentu mencakup semua tanaman hias dan semua kondisi rumah.
+
+3. Asal detail dataset tidak terdokumentasi lengkap
+File dataset tersedia, tetapi metode pengumpulan data mentah tidak ditemukan di kode/dataset/referensi.
+
+4. Rules harus dijaga manual
+Jika ada perubahan pilihan pertanyaan, rules harus diperbarui agar tetap valid.
+
+5. Belum ada fitur admin
+Tidak ditemukan dashboard admin untuk mengubah dataset dari browser.
+
+6. Belum ada feedback loop
+Tidak ditemukan fitur pengguna memberi rating apakah rekomendasi cocok.
+
+7. Belum ada diagnosis kesehatan tanaman
+Program hanya merekomendasikan tanaman, bukan mendiagnosis penyakit tanaman.
+
+B. Saran pengembangan
+
+1. Tambahkan dokumentasi asal dataset
+Misalnya sumber data tiap tanaman, tanggal pengumpulan, dan alasan klasifikasi cahaya/penyiraman.
+
+2. Tambahkan lebih banyak tanaman
+Jumlah tanaman bisa diperluas agar rekomendasi lebih beragam.
+
+3. Tambahkan rules yang lebih lengkap
+Rules bisa ditambah untuk mengurangi kasus alternatif terbaik.
+
+4. Tambahkan fitur admin
+Admin bisa mengubah data tanaman dan rules tanpa mengedit Excel manual.
+
+5. Tambahkan feedback pengguna
+Pengguna bisa memberi rating "cocok" atau "tidak cocok", sehingga pengembang tahu rules mana yang perlu diperbaiki.
+
+6. Tambahkan mode penjelasan rule
+Hasil bisa menampilkan matched_rule dan kondisi yang cocok agar lebih transparan.
+
+7. Tambahkan validasi dataset otomatis di CI
+Setiap perubahan dataset bisa langsung diuji agar tidak merusak rules.
+
+8. Pertimbangkan pendekatan hybrid
+Jika dataset sudah besar dan ada feedback pengguna, sistem bisa dikembangkan menjadi hybrid: rule-based untuk transparansi dan machine learning untuk pola rekomendasi.
+
+
+17. CHECKLIST ANTI-HALUSINASI
+
+1. Semua klaim teknis sudah dikaitkan ke file/sumber.
+Status: ya. Klaim teknis utama memakai app.py, ai/recommender.py, templates, tests, requirements.txt, dataset Excel, deployed app, atau referensi resmi.
+
+2. Tidak menyebut training ML tanpa bukti.
+Status: ya. Dokumen ini justru menegaskan tidak ditemukan training ML, neural network, epoch, akurasi model, atau train-test split.
+
+3. Dataset sudah dijelaskan dari file Excel.
+Status: ya. Dokumen ini menjelaskan path dataset, sheet, jumlah baris, kolom, contoh data, variabel pertanyaan, daftar tanaman, dan hubungan antar sheet.
+
+4. Referensi eksternal sudah dicantumkan.
+Status: ya. Referensi mencakup Flask, pandas, openpyxl, Python functools, Vercel, dua jurnal forward chaining, dan University of Georgia.
+
+5. Bagian yang tidak ditemukan sudah ditandai.
+Status: ya. Dokumen menandai bahwa asal detail pengumpulan dataset, proses training ML, fitur admin, feedback loop, dan penggunaan langsung tips_perawatan di template hasil tidak ditemukan.
+
+6. Deployed app sudah dicek.
+Status: ya. Pemeriksaan menemukan /healthz status ok, halaman utama memuat teks penting, dan POST /rekomendasi valid menampilkan Sansevieria.
+
+7. Program tidak dilebih-lebihkan.
+Status: ya. Keamanan hanya disebut sebagai header dasar, bukan jaminan aplikasi sepenuhnya aman. AI dijelaskan sebagai sistem pakar/rule-based, bukan model ML.
+
+
+RINGKASAN SATU KALIMAT UNTUK DIHAFAL
+
+FLORA-AI adalah aplikasi web Flask berbasis Python yang membaca dataset Excel berisi tanaman, pertanyaan, dan rules, lalu memakai forward logic sederhana untuk merekomendasikan tanaman hias yang paling cocok berdasarkan jawaban pengguna.

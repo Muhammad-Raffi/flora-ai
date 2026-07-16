@@ -1,0 +1,228 @@
+PENJELASAN FLORA-AI
+Versi Mudah Dipahami Untuk Belajar dan Presentasi
+
+Sumber utama ringkasan ini:
+HASIL_UAS_FLORA_AI.txt
+
+
+1. Apa Itu FLORA-AI?
+
+FLORA-AI adalah aplikasi web yang membantu pengguna memilih tanaman hias yang cocok dengan kondisi rumah atau ruangannya. Pengguna tidak perlu hafal karakter setiap tanaman. Pengguna cukup menjawab beberapa pertanyaan sederhana, lalu aplikasi memberikan rekomendasi tanaman yang paling sesuai.
+
+Contohnya, pengguna bisa menjawab:
+- cahaya di ruangan rendah atau terang,
+- tanaman akan diletakkan di dalam atau luar ruangan,
+- pengguna bisa menyiram tanaman sering atau jarang,
+- ruang yang tersedia kecil, sedang, atau besar,
+- pengguna punya hewan peliharaan atau tidak,
+- pengguna ingin tanaman daun, bunga, kaktus, atau bebas.
+
+Setelah itu FLORA-AI akan mencocokkan jawaban tersebut dengan data tanaman yang sudah disiapkan.
+
+
+2. Masalah Yang Ingin Diselesaikan
+
+Banyak orang ingin punya tanaman hias, tetapi bingung memilih tanaman yang tepat. Tidak semua tanaman cocok untuk semua tempat.
+
+Misalnya:
+- ada tanaman yang cocok untuk ruangan minim cahaya,
+- ada tanaman yang butuh tempat terang,
+- ada tanaman yang harus sering disiram,
+- ada tanaman yang tahan jika jarang disiram,
+- ada tanaman yang lebih aman untuk rumah dengan hewan peliharaan,
+- ada tanaman yang berduri atau punya bagian tajam.
+
+Kalau salah memilih tanaman, tanaman bisa cepat layu, tidak tumbuh baik, atau tidak cocok dengan ruang yang tersedia. FLORA-AI dibuat untuk membantu pengguna mengambil keputusan dengan lebih mudah.
+
+
+3. Cara Kerja FLORA Dengan Bahasa Sehari-hari
+
+Cara kerja FLORA-AI bisa dibayangkan seperti konsultasi singkat dengan orang yang paham tanaman.
+
+Pertama, FLORA bertanya tentang kebutuhan pengguna. Pertanyaannya ada 10. Pertanyaan itu berhubungan dengan kondisi ruang, kebiasaan merawat tanaman, budget, ukuran tanaman, dan preferensi tampilan.
+
+Kedua, jawaban pengguna dibandingkan dengan data tanaman. Data ini berisi daftar tanaman dan ciri-cirinya.
+
+Ketiga, FLORA melihat aturan rekomendasi. Aturan ini mirip kalimat:
+"Jika kondisi pengguna seperti ini, maka tanaman yang cocok adalah tanaman ini."
+
+Keempat, FLORA memilih tanaman yang paling cocok, lalu menampilkan hasilnya kepada pengguna. Hasilnya tidak hanya nama tanaman, tetapi juga alasan kenapa tanaman itu cocok.
+
+Jadi, FLORA tidak menebak secara acak. FLORA memakai data dan aturan yang sudah disusun.
+
+
+4. Apa Isi Dataset FLORA?
+
+Dataset FLORA adalah file Excel yang menjadi sumber data utama aplikasi. Dataset ini berisi 3 bagian penting:
+
+1. Data tanaman
+Bagian ini berisi daftar tanaman hias. Jumlahnya 30 tanaman. Setiap tanaman memiliki informasi seperti nama tanaman, kebutuhan cahaya, kebutuhan penyiraman, cocok indoor atau outdoor, ukuran, budget, dan alasan rekomendasi.
+
+2. Data pertanyaan
+Bagian ini berisi 10 pertanyaan yang akan dijawab pengguna. Pertanyaan ini yang muncul di halaman rekomendasi.
+
+3. Data rules atau aturan
+Bagian ini berisi 63 aturan rekomendasi. Aturan ini menghubungkan jawaban pengguna dengan tanaman yang disarankan.
+
+Contoh hubungan sederhananya:
+jika pengguna memilih cahaya rendah, penyiraman jarang, indoor, ruang kecil, perawatan mudah, budget rendah, tampilan daun, dan ukuran kecil, maka salah satu tanaman yang cocok adalah Sansevieria.
+
+Dataset ini sangat penting. Kalau data tanaman salah, hasil rekomendasi juga bisa salah. Kalau aturan kurang lengkap, hasil mungkin tetap muncul, tetapi belum tentu benar-benar paling ideal.
+
+
+5. Apa Maksud "AI" Pada FLORA?
+
+AI pada FLORA-AI bukan berarti program ini melatih model seperti machine learning modern. FLORA tidak memakai proses training model, tidak memakai neural network, dan tidak menghitung akurasi model seperti pada sistem machine learning.
+
+AI pada FLORA lebih tepat dipahami sebagai sistem pakar sederhana. Sistem pakar adalah program yang mencoba meniru cara berpikir pakar dengan aturan yang jelas.
+
+Bahasa sederhananya:
+- pengguna memberikan fakta melalui jawaban,
+- FLORA membaca aturan,
+- FLORA mencocokkan fakta dengan aturan,
+- FLORA mengeluarkan rekomendasi.
+
+Metode ini disebut rule-based atau forward logic. Forward logic berarti sistem mulai dari fakta yang tersedia, lalu maju menuju kesimpulan.
+
+Jadi, saat presentasi, penjelasan yang aman adalah:
+"FLORA-AI adalah sistem rekomendasi berbasis rule-based atau forward logic. Program ini tidak melatih model machine learning, tetapi mencocokkan jawaban pengguna dengan aturan dan dataset tanaman."
+
+
+6. Contoh Rekomendasi Sansevieria
+
+Misalnya pengguna menjawab:
+- cahaya: rendah,
+- penyiraman: jarang,
+- posisi: indoor,
+- ruang: kecil,
+- perawatan: mudah,
+- hewan peliharaan: tidak,
+- nyaman dengan duri: tidak,
+- budget: rendah,
+- jenis tampilan: daun,
+- ukuran: kecil.
+
+Dari jawaban itu, FLORA mencocokkan dengan aturan yang ada di dataset. Hasil yang muncul adalah Sansevieria sebagai rekomendasi utama.
+
+Alasan Sansevieria cocok:
+- tahan di tempat minim cahaya,
+- cocok untuk dalam ruangan,
+- tidak perlu sering disiram,
+- cocok untuk ruang kecil.
+
+Contoh ini bagus dipakai saat presentasi karena alurnya mudah dijelaskan. Pengguna punya kebutuhan tertentu, lalu sistem mencari tanaman yang paling sesuai dengan kebutuhan tersebut.
+
+
+7. Kenapa Hasil FLORA Bisa Dipercaya?
+
+Hasil FLORA bisa dipercaya dalam batas tertentu karena rekomendasi tidak dibuat secara asal. Rekomendasi berasal dari dataset dan aturan yang sudah disiapkan.
+
+Ada tiga alasan utama:
+
+1. Data tanaman jelas
+Setiap tanaman punya informasi seperti cahaya, penyiraman, posisi, ukuran, dan budget.
+
+2. Pertanyaan sesuai dengan data
+Pertanyaan yang dijawab pengguna berhubungan langsung dengan informasi tanaman.
+
+3. Aturan bisa dijelaskan
+Sistem tidak hanya memberi hasil, tetapi juga bisa dijelaskan alasannya. Misalnya Sansevieria cocok karena tahan minim cahaya dan tidak perlu sering disiram.
+
+Namun, hasil FLORA tetap bergantung pada kualitas dataset. Jika dataset belum lengkap atau ada aturan yang kurang tepat, hasil rekomendasi juga bisa kurang tepat.
+
+
+8. Kelebihan FLORA-AI
+
+1. Mudah digunakan
+Pengguna cukup menjawab pertanyaan singkat.
+
+2. Mudah dipahami
+Hasil rekomendasi punya alasan yang bisa dijelaskan.
+
+3. Cocok untuk presentasi
+Alurnya jelas: jawaban pengguna masuk, data dibaca, aturan dicocokkan, hasil keluar.
+
+4. Tidak membutuhkan data sangat besar
+Karena tidak memakai training machine learning, sistem bisa berjalan dengan dataset yang lebih kecil.
+
+5. Mudah dikembangkan
+Jika ingin menambah tanaman, data tanaman dan aturan rekomendasi bisa diperbarui.
+
+
+9. Batasan FLORA-AI
+
+1. Tidak belajar sendiri
+FLORA tidak otomatis menjadi lebih pintar dari penggunaan sehari-hari. Jika ingin menambah pengetahuan, dataset dan aturan harus diperbarui.
+
+2. Dataset masih terbatas
+Saat ini dataset berisi 30 tanaman, 10 pertanyaan, dan 63 rules. Ini cukup untuk demo dan presentasi, tetapi belum mencakup semua jenis tanaman hias.
+
+3. Hasil bergantung pada aturan
+Jika aturan kurang lengkap, sistem mungkin memberi rekomendasi alternatif terbaik, bukan hasil yang benar-benar sempurna.
+
+4. Belum ada fitur feedback pengguna
+Pengguna belum bisa memberi penilaian apakah rekomendasi cocok atau tidak.
+
+5. Belum menjelaskan asal detail semua data tanaman
+File dataset tersedia, tetapi cara pengumpulan data mentah tidak dijelaskan secara lengkap di dokumen program.
+
+
+10. Ringkasan Untuk Presentasi
+
+FLORA-AI adalah aplikasi rekomendasi tanaman hias. Aplikasi ini membantu pengguna memilih tanaman yang cocok berdasarkan kondisi ruang dan kebiasaan merawat tanaman.
+
+Pengguna menjawab 10 pertanyaan. Jawaban itu kemudian dicocokkan dengan dataset Excel yang berisi 30 tanaman dan 63 aturan rekomendasi. Sistem menggunakan pendekatan rule-based atau forward logic, yaitu mencocokkan fakta dari pengguna dengan aturan yang tersedia.
+
+FLORA-AI bukan machine learning yang dilatih. Tidak ada proses training model di program ini. AI di sini lebih tepat disebut sistem pakar sederhana, karena komputer mengambil keputusan berdasarkan aturan.
+
+Contoh hasilnya, jika pengguna memilih kondisi cahaya rendah, penyiraman jarang, indoor, ruang kecil, dan tampilan daun, sistem dapat merekomendasikan Sansevieria. Alasannya, Sansevieria tahan minim cahaya, cocok di dalam ruangan, dan tidak perlu sering disiram.
+
+Kelebihan FLORA adalah mudah digunakan, mudah dijelaskan, dan cocok untuk demo. Batasannya, sistem sangat bergantung pada dataset dan aturan yang dibuat.
+
+
+11. Pertanyaan Dosen Yang Paling Mungkin Muncul
+
+1. Apakah FLORA-AI benar-benar AI?
+Jawaban:
+Ya, tetapi AI yang digunakan adalah sistem pakar sederhana berbasis aturan. Bukan machine learning yang dilatih.
+
+2. Kenapa tidak memakai machine learning?
+Jawaban:
+Karena dataset masih kecil dan tujuan program adalah rekomendasi yang mudah dijelaskan. Rule-based lebih cocok untuk kondisi ini.
+
+3. Apa isi dataset FLORA?
+Jawaban:
+Dataset berisi data tanaman, daftar pertanyaan, dan aturan rekomendasi. Jumlahnya 30 tanaman, 10 pertanyaan, dan 63 rules.
+
+4. Bagaimana sistem menentukan rekomendasi?
+Jawaban:
+Sistem mencocokkan jawaban pengguna dengan aturan di dataset, lalu memilih tanaman yang paling cocok.
+
+5. Apa contoh hasil rekomendasi?
+Jawaban:
+Jika pengguna memilih cahaya rendah, penyiraman jarang, indoor, ruang kecil, dan tampilan daun, sistem bisa merekomendasikan Sansevieria.
+
+6. Apa kelemahan sistem ini?
+Jawaban:
+Sistem tidak belajar sendiri. Kualitas hasil sangat bergantung pada dataset dan aturan.
+
+7. Apakah data tanaman bisa ditambah?
+Jawaban:
+Bisa. Pengembang dapat menambah data tanaman dan aturan baru di dataset.
+
+8. Apakah hasil rekomendasi selalu benar?
+Jawaban:
+Tidak selalu. Hasilnya bergantung pada kualitas data dan aturan. Namun sistem memberikan rekomendasi berdasarkan data yang tersedia, bukan acak.
+
+
+12. Kalimat Penutup Yang Bisa Dipakai
+
+Kesimpulannya, FLORA-AI adalah aplikasi rekomendasi tanaman hias yang memakai dataset Excel dan aturan sederhana untuk membantu pengguna memilih tanaman. Program ini mudah dijelaskan karena setiap rekomendasi punya alasan. Walaupun belum memakai machine learning, FLORA sudah menunjukkan konsep AI berbasis sistem pakar, yaitu mengambil keputusan berdasarkan fakta dan aturan.
+
+
+13. Sumber Ringkasan
+
+Materi ini diringkas dari:
+HASIL_UAS_FLORA_AI.txt
+
+File tersebut berisi penjelasan lengkap tentang alur program, dataset, referensi, validasi, contoh rekomendasi, dan bahan presentasi UAS FLORA-AI.
